@@ -1,0 +1,29 @@
+[
+  {
+    "id": "1",
+    "type": "water",
+    "water_type": "cold",
+    "int_id": "12312313421",
+    "attestation_date": "2024-02-01",
+    "next_attestation_date": "2030-02-02",
+    "property_id": 1
+  },
+  {
+    "id": "2",
+    "type": "water",
+    "water_type": "hot",
+    "int_id": "2222222222222",
+    "attestation_date": "2024-02-01",
+    "next_attestation_date": "2030-02-02",
+    "property_id": 1
+  },
+  {
+    "id": "3",
+    "type": "electro",
+    "water_type": null,
+    "int_id": "44444444",
+    "attestation_date": "2022-02-01",
+    "next_attestation_date": "2031-02-02",
+    "property_id": 1
+  }
+]

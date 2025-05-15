@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "counter_id": 1,
+    "value": 24.5,
+    "create_at": "2025-05-15"
+  },
+  {
+    "id": "2",
+    "counter_id": 1,
+    "value": 20,
+    "create_at": "2025-04-12"
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1",
+    "contract": "01/2025",
+    "contract_date": "2025-05-14",
+    "end_contract_date": "2026-01-14",
+    "request_indicators_date": "2025-01-20",
+    "paymentDate": "2025-05-14",
+    "isActiveRent": true,
+    "property_id": 1,
+    "tenants": [1, 2]
+  },
+  {
+    "id": "2",
+    "contract": "01/2025",
+    "contract_date": "2025-05-14",
+    "end_contract_date": "2026-01-14",
+    "paymentDate": "2025-05-14",
+    "isActiveRent": true,
+    "property_id": 1,
+    "tenants": [1, 2]
+  }
+]
