@@ -1,29 +1,29 @@
 [
   {
     "id": "1",
-    "type": "water",
-    "water_type": "cold",
-    "int_id": "12312313421",
-    "attestation_date": "2024-02-01",
-    "next_attestation_date": "2030-02-02",
-    "property_id": 1
+    "counterType": "electricity",
+    "counterId": "12312313421",
+    "verificationDate": "2024-02-01",
+    "nextVerificationDate": "2030-02-02",
+    "propertyId": "1",
+    "isActive": true
   },
   {
     "id": "2",
-    "type": "water",
-    "water_type": "hot",
-    "int_id": "2222222222222",
-    "attestation_date": "2024-02-01",
-    "next_attestation_date": "2030-02-02",
-    "property_id": 1
+    "counterType": "hotWater",
+    "counterId": "12312313421",
+    "verificationDate": "2024-02-01",
+    "nextVerificationDate": "2030-02-02",
+    "propertyId": "1",
+    "isActive": true
   },
   {
     "id": "3",
-    "type": "electro",
-    "water_type": null,
-    "int_id": "44444444",
-    "attestation_date": "2022-02-01",
-    "next_attestation_date": "2031-02-02",
-    "property_id": 1
+    "counterType": "coldWater",
+    "counterId": "12312313421",
+    "verificationDate": "2024-02-01",
+    "nextVerificationDate": "2030-02-02",
+    "propertyId": "1",
+    "isActive": true
   }
 ]

@@ -4,15 +4,43 @@
     "name": "Name1",
     "address": "Spb, Prosvet 1111111177 Prosvet 77 Prosvet 77 Prosvet 77",
     "label": "Prosvet1",
-    "Rooms": 2,
-    "Squares": 44.5
+    "image": "images/flat.jpg",
+    "rooms": 2,
+    "area": 44.5,
+    "counters": ["1", "2", "3"],
+    "isRented": true
   },
   {
     "id": "2",
     "name": "Name2",
     "address": "Spb, Prosvet 2222222222222 Prosvet 77 Prosvet 77 Prosvet 77",
-    "label": "Prosvet1",
-    "Rooms": 1,
-    "Squares": 31.5
+    "label": "Prosvet2",
+    "image": "images/flat.jpg",
+    "rooms": 1,
+    "area": 31.5,
+    "counters": ["1", "2", "3"],
+    "isRented": false
+  },
+  {
+    "id": "3",
+    "name": "Name3",
+    "address": "Spb, Prosvet 33333333333333333 Prosvet 77 Prosvet 77 Prosvet 77",
+    "label": "Prosvet3",
+    "image": "images/flat.jpg",
+    "rooms": 4,
+    "area": 131.5,
+    "counters": ["1", "2", "3"],
+    "isRented": false
+  },
+  {
+    "id": "4",
+    "name": "Name4",
+    "address": "Spb, Prosvet 4444444444 Prosvet 77 Prosvet 77 Prosvet 77",
+    "label": "Prosvet4",
+    "image": "images/flat.jpg",
+    "rooms": 1,
+    "area": 25.52,
+    "counters": ["1", "2", "3"],
+    "isRented": true
   }
 ]

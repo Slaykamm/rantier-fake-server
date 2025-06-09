@@ -1,32 +1,39 @@
 [
   {
     "id": "1",
-    "first_name": "Elena",
-    "second_name": "Elenovna",
-    "last_name": "Elenova",
+    "firstName": "Elena",
+    "secondName": "Elenovna",
+    "lastName": "Elenova",
+    "tenantType": 1,
     "phone": "+79111111111",
     "email": "elena@elena.com",
-    "tg_id": 123123123111,
-    "tg_nick": "@elena"
+    "tgId": 123123123111,
+    "tgNick": "@elena",
+    "passportSeries": "1324",
+    "passportNumber": "456789",
+    "passportDate": "01.01.2022",
+    "passportIssued": "11 О/м Калининской овощебазы Саратова"
   },
   {
     "id": "2",
-    "first_name": "Elena2",
-    "second_name": "Elenovna2",
-    "last_name": "Elenova2",
+    "firstName": "Elena2",
+    "secondName": "Elenovna2",
+    "lastName": "Elenova2",
     "phone": "+79222222222",
     "email": "elena2@elena.com",
-    "tg_id": 123123123222,
-    "tg_nick": "@elena2"
+    "tgId": 123123123222,
+    "tgNick": "@elena2",
+    "tenantType": 2
   },
   {
     "id": "3",
-    "first_name": "Elena3",
-    "second_name": "Elenovna3",
-    "last_name": "Elenova3",
+    "firstName": "Elena3",
+    "secondName": "Elenovna3",
+    "lastName": "Elenova3",
     "phone": "+79333333333",
     "email": "elena3@elena.com",
-    "tg_id": 123123123333,
-    "tg_nick": "@elena3"
+    "tgId": 123123123333,
+    "tgNick": "@elena3",
+    "tenantType": 2
   }
 ]

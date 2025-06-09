@@ -1,14 +1,38 @@
 [
   {
     "id": "1",
-    "counter_id": 1,
+    "counterId": "1",
     "value": 24.5,
-    "create_at": "2025-05-15"
+    "createAt": "2025-05-15"
   },
   {
     "id": "2",
-    "counter_id": 1,
+    "counterId": "1",
     "value": 20,
-    "create_at": "2025-04-12"
+    "createAt": "2025-04-12"
+  },
+  {
+    "id": "3",
+    "counterId": "2",
+    "value": 1111,
+    "createAt": "2025-01-15"
+  },
+  {
+    "id": "4",
+    "counterId": "2",
+    "value": 22222,
+    "createAt": "2025-04-12"
+  },
+  {
+    "id": "5",
+    "counterId": "2",
+    "value": 3333.0,
+    "createAt": "2025-03-12"
+  },
+  {
+    "id": "6",
+    "counterId": "3",
+    "value": 3333.0,
+    "createAt": "2021-03-12"
   }
 ]

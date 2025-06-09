@@ -1,0 +1,30 @@
+[
+  {
+    "id": "1",
+    "create_at": "2025-01-01",
+    "rent_id": "1",
+    "amount": 45000.0,
+    "type": "debit"
+  },
+  {
+    "id": "1",
+    "create_at": "2025-01-01",
+    "rent_id": "1",
+    "amount": 8000.0,
+    "type": "debit"
+  },
+  {
+    "id": "1",
+    "create_at": "2025-01-01",
+    "rent_id": "1",
+    "amount": 41000.0,
+    "type": "credit"
+  },
+  {
+    "id": "1",
+    "create_at": "2025-01-01",
+    "rent_id": "1",
+    "amount": 12000.0,
+    "type": "credit"
+  }
+]
