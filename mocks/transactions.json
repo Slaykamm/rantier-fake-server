@@ -2,29 +2,33 @@
   {
     "id": "1",
     "create_at": "2025-01-01",
-    "rent_id": "1",
+    "rentId": "1",
     "amount": 45000.0,
-    "type": "debit"
+    "kindOfPayment": "main",
+    "type": "invoice"
   },
   {
-    "id": "1",
+    "id": "2",
     "create_at": "2025-01-01",
-    "rent_id": "1",
+    "rentId": "1",
     "amount": 8000.0,
-    "type": "debit"
+    "kindOfPayment": "service",
+    "type": "invoice"
   },
   {
-    "id": "1",
+    "id": "3",
     "create_at": "2025-01-01",
-    "rent_id": "1",
+    "rentId": "1",
     "amount": 41000.0,
-    "type": "credit"
+    "kindOfPayment": "main",
+    "type": "payment"
   },
   {
-    "id": "1",
+    "id": "4",
     "create_at": "2025-01-01",
-    "rent_id": "1",
+    "rentId": "1",
     "amount": 12000.0,
-    "type": "credit"
+    "kindOfPayment": "service",
+    "type": "payment"
   }
 ]
