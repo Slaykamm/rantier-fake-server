@@ -12,7 +12,8 @@
     "passportSeries": "1324",
     "passportNumber": "456789",
     "passportDate": "01.01.2022",
-    "passportIssued": "11 О/м Калининской овощебазы Саратова"
+    "passportIssued": "11 О/м Калининской овощебазы Саратова",
+    "rentId": 1
   },
   {
     "id": "2",
@@ -23,7 +24,8 @@
     "email": "elena2@elena.com",
     "tgId": 123123123222,
     "tgNick": "@elena2",
-    "tenantType": 2
+    "tenantType": 2,
+    "rentId": 1
   },
   {
     "id": "3",
@@ -34,6 +36,7 @@
     "email": "elena3@elena.com",
     "tgId": 123123123333,
     "tgNick": "@elena3",
-    "tenantType": 2
+    "tenantType": 2,
+    "rentId": 1
   }
 ]

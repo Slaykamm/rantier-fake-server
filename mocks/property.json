@@ -7,7 +7,6 @@
     "image": "images/flat.jpg",
     "rooms": 2,
     "area": 44.5,
-    "counters": ["1", "2", "3"],
     "isRented": true
   },
   {
@@ -18,7 +17,6 @@
     "image": "images/flat.jpg",
     "rooms": 1,
     "area": 31.5,
-    "counters": ["1", "2", "3"],
     "isRented": false
   },
   {
@@ -29,7 +27,6 @@
     "image": "images/flat.jpg",
     "rooms": 4,
     "area": 131.5,
-    "counters": ["1", "2", "3"],
     "isRented": false
   },
   {
@@ -40,7 +37,6 @@
     "image": "images/flat.jpg",
     "rooms": 1,
     "area": 25.52,
-    "counters": ["1", "2", "3"],
     "isRented": true
   }
 ]
