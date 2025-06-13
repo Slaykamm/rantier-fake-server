@@ -1,29 +1,29 @@
 [
   {
-    "id": "1",
+    "id": 1,
     "counterType": "electricity",
     "counterId": "12312313421",
     "verificationDate": "2024-02-01",
     "nextVerificationDate": "2030-02-02",
-    "propertyId": "1",
+    "propertyId": 1,
     "isActive": true
   },
   {
-    "id": "2",
+    "id": 2,
     "counterType": "hotWater",
     "counterId": "12312313421",
     "verificationDate": "2024-02-01",
     "nextVerificationDate": "2030-02-02",
-    "propertyId": "1",
+    "propertyId": 1,
     "isActive": true
   },
   {
-    "id": "3",
+    "id": 3,
     "counterType": "coldWater",
     "counterId": "12312313421",
     "verificationDate": "2024-02-01",
     "nextVerificationDate": "2030-02-02",
-    "propertyId": "1",
+    "propertyId": 1,
     "isActive": true
   }
 ]

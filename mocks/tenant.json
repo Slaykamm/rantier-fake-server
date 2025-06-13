@@ -1,6 +1,6 @@
 [
   {
-    "id": "1",
+    "id": 1,
     "firstName": "Elena",
     "secondName": "Elenovna",
     "lastName": "Elenova",
@@ -16,7 +16,7 @@
     "rentId": 1
   },
   {
-    "id": "2",
+    "id": 2,
     "firstName": "Elena2",
     "secondName": "Elenovna2",
     "lastName": "Elenova2",
@@ -28,7 +28,7 @@
     "rentId": 1
   },
   {
-    "id": "3",
+    "id": 3,
     "firstName": "Elena3",
     "secondName": "Elenovna3",
     "lastName": "Elenova3",

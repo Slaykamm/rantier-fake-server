@@ -1,6 +1,6 @@
 [
   {
-    "id": "1",
+    "id": 1,
     "name": "Name1",
     "address": "Spb, Prosvet 1111111177 Prosvet 77 Prosvet 77 Prosvet 77",
     "label": "Prosvet1",
@@ -10,7 +10,7 @@
     "isRented": true
   },
   {
-    "id": "2",
+    "id": 2,
     "name": "Name2",
     "address": "Spb, Prosvet 2222222222222 Prosvet 77 Prosvet 77 Prosvet 77",
     "label": "Prosvet2",
@@ -20,7 +20,7 @@
     "isRented": false
   },
   {
-    "id": "3",
+    "id": 3,
     "name": "Name3",
     "address": "Spb, Prosvet 33333333333333333 Prosvet 77 Prosvet 77 Prosvet 77",
     "label": "Prosvet3",
@@ -30,7 +30,7 @@
     "isRented": false
   },
   {
-    "id": "4",
+    "id": 4,
     "name": "Name4",
     "address": "Spb, Prosvet 4444444444 Prosvet 77 Prosvet 77 Prosvet 77",
     "label": "Prosvet4",
