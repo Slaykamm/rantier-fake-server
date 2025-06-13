@@ -210,9 +210,9 @@ AppDataSource.initialize()
           // @ts-ignore
           (item) =>
             // @ts-ignore
-            item.property_id === req.body.property_id &&
+            item.propertyId === req.body.propertyId &&
             !!item.isActiveRent &&
-            new Date() < new Date(item.end_contract_date)
+            new Date() < new Date(item.endContractDate)
         );
         if (!!search) {
           // @ts-ignore
