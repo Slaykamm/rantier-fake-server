@@ -23,16 +23,17 @@ export const getCounterById = (req: Request<{ id: number }>, res: Response) => {
 export const getCountersByPropertyId = (
   req: Request<{}, {}, { propertyId: number }>,
   res: Response<IResponseDto<ICounter>>
-) => {
+): void => {
   const propertyId = req.body.propertyId;
   const respData = counter.filter((item) => item.propertyId == propertyId);
 
   if (!!respData.length) {
-    return res.status(200).json({ status: "success", data: respData });
+    res.status(200).json({ status: "success", data: respData });
+  } else {
+    res.status(200).json({
+      status: "success",
+      data: [],
+      message: "No counters by propertyId found",
+    });
   }
-  return res.status(200).json({
-    status: "success",
-    data: [],
-    message: "No counters by propertyId found",
-  });
 };
