@@ -8,7 +8,7 @@ export interface IRent {
   paymentDate: string;
   isActiveRent: boolean;
   amount: number;
-  // TODO убрать!
-  servicePaymentAmount: number;
+  // // TODO убрать!
+  // servicePaymentAmount: number;
   propertyId: number;
 }

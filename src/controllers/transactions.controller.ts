@@ -6,7 +6,7 @@ import {
 } from "../models/transactions.model";
 import { getSumFromTransaction } from "../utils/untils";
 
-const transactions: ITransactions[] = require("../../mocks/tenant.json");
+import { transactions } from "../mocks/transactions";
 
 export const getTransactionsByRentId = (
   req: Request<{}, {}, { rentId: number }>,
