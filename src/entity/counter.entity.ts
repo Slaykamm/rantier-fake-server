@@ -15,8 +15,8 @@ export class Counter {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column("text")
-  counterTypeId!: string; // Это должен быть ID типа счетчика
+  @Column("int")
+  counterTypeId!: number; // Это должен быть ID типа счетчика
 
   @Column("text")
   counterId!: string;
@@ -37,7 +37,7 @@ export class Counter {
   @JoinColumn({ name: "propertyId" })
   property!: Property;
 
-  @OneToMany(() => Indications, (indication) => indication.counterId)
+  @OneToMany(() => Indications, (indication) => indication.counters)
   indications!: Indications[];
 
   @ManyToOne(() => CounterType, (counterType) => counterType.counters) // ссылка на поле в сущности которую коннектим

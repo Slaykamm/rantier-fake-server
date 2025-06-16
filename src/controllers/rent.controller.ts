@@ -40,7 +40,7 @@ export const getRentByPropertyId = (
   try {
     const search = rent.find(
       (item) =>
-        item.propertyId === req.body.propertyId &&
+        item.propertyId.id === req.body.propertyId &&
         !!item.isActiveRent &&
         new Date() < new Date(item.endContractDate)
     );

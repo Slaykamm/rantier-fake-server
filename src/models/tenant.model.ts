@@ -1,3 +1,5 @@
+import { IRent } from "./rent.model";
+
 export interface ITenant {
   id: number;
   firstName: string;
@@ -12,5 +14,5 @@ export interface ITenant {
   passportNumber?: string;
   passportDate?: string;
   passportIssued?: string;
-  rentId: number;
+  rentId: IRent;
 }

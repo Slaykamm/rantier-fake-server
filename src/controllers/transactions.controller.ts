@@ -16,7 +16,7 @@ export const getTransactionsByRentId = (
 
   try {
     const filteredByRentId = transactions?.filter(
-      (transaction) => transaction.rentId == rentId
+      (transaction) => transaction.rentId.id == rentId
     );
 
     const main = filteredByRentId.filter(

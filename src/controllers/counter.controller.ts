@@ -2,10 +2,10 @@ import { Request, Response } from "express";
 import { ICounter } from "../models/counter.model";
 import { IResponseDto } from "../models/response.model";
 import * as counterService from "../services/counter.service";
-const counter: ICounter[] = require("../../mocks/counter.json");
 
-export const getCounters = (req: Request, res: Response) => {
-  res.send(counter);
+export const getCounters = async (req: Request, res: Response) => {
+  const counters = await counterService.getCounters();
+  res.send(counters);
 };
 
 export const getCounterById = async (
@@ -19,11 +19,6 @@ export const getCounterById = async (
       res.send(counter);
     } else {
       res.json({ status: `Данного счетчика ID: ${id} нет в БД` });
-      // if (counter[Number(id) - 1]) {
-      //   res.send(counter[Number(id) - 1]);
-      // } else {
-      //   res.json({ status: `Данного ID: ${id} нет в БД` });
-      // }
     }
   } catch {
     res.json({ status: `Данного ID: ${id} нет в БД` });

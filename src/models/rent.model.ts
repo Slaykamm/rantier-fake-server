@@ -1,3 +1,5 @@
+import { IProperty } from "./property.model";
+
 export interface IRent {
   id: number;
   createAt: string;
@@ -10,5 +12,5 @@ export interface IRent {
   amount: number;
   // // TODO убрать!
   // servicePaymentAmount: number;
-  propertyId: number;
+  propertyId: IProperty;
 }

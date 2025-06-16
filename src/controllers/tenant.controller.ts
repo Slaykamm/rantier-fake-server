@@ -34,7 +34,7 @@ export const getTenantsByRentId = (
 ) => {
   try {
     const rentId = req?.body?.rentId;
-    const respData = tenant.filter((item) => item.rentId == rentId);
+    const respData = tenant.filter((item) => item.rentId.id == rentId);
     if (!!respData.length) {
       res.status(200).json({ status: "success", data: respData });
     } else {

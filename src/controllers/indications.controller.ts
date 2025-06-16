@@ -2,63 +2,47 @@ import { Request, Response } from "express";
 import { IResponseDto } from "../models/response.model";
 import { IIndications } from "../models/indications.model";
 const indications: IIndications[] = require("../../mocks/indications.json");
+import * as indicationsService from "../services/indications.service";
+import { Indications } from "../entity/indications.entity";
 
-export const getIndications = (req: Request, res: Response) => {
+export const getIndications = async (req: Request, res: Response) => {
+  const indications = await indicationsService.getIndications();
   res.send(indications);
 };
-export const getIndicationsById = (req: Request, res: Response) => {
+export const getIndicationsById = async (
+  req: Request<{ id: number }>,
+  res: Response
+) => {
   const id = req.params.id;
   try {
-    if (indications[Number(id) - 1]) {
-      res.send(indications[Number(id) - 1]);
+    const indications = await indicationsService.getIndicationsById(id);
+    if (!!indications?.length) {
+      res.status(200).send({ status: "success", data: indications });
     } else {
-      res.json({ status: `Данного ID: ${id} нет в БД` });
+      res.status(200).json({ status: `Данного ID: ${id} нет в БД` });
     }
   } catch {
-    res.json({ status: `Данного ID: ${id} нет в БД` });
+    res.status(500).json({ status: `Данного ID: ${id} нет в БД` });
   }
 };
 
-export const postIndicationsByCounterId = (
+export const postIndicationsByCounterId = async (
   req: Request<{}, {}, { counterId: number }>,
-  res: Response<IResponseDto<IIndications>>
+  res: Response<IResponseDto<Indications>>
 ) => {
   try {
     const counterId = req.body?.counterId;
-    const indicationsFilteredByCounterId = indications?.filter(
-      (indication: any) => indication.counterId == counterId
-    );
-
-    if (indicationsFilteredByCounterId?.length) {
-      const orderedFilteredIndications = indicationsFilteredByCounterId.sort(
-        // @ts-ignore
-        (a, b) => new Date(b.createAt) - new Date(a.createAt)
-      );
-
-      const twoLatestIndications = [
-        orderedFilteredIndications?.[0],
-        orderedFilteredIndications?.[1],
-      ];
-
-      const filteredTwoLatestIndications = twoLatestIndications.filter(
-        (item) => !!item
-      );
-      // @ts-ignore
-      if (!!filteredTwoLatestIndications.length) {
-        res.status(200).json({
-          status: "success",
-          data: filteredTwoLatestIndications,
-        });
-      } else {
-        res.status(200).json({
-          status: "error",
-          message: "No any indications for this counterId",
-        });
-      }
-    } else {
+    const filteredTwoLatestIndications =
+      await indicationsService.postIndicationsByCounterId(counterId);
+    // @ts-ignore
+    if (!!filteredTwoLatestIndications.length) {
       res.status(200).json({
         status: "success",
-        data: [],
+        data: filteredTwoLatestIndications,
+      });
+    } else {
+      res.status(200).json({
+        status: "error",
         message: "No any indications for this counterId",
       });
     }
