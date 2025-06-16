@@ -4,10 +4,11 @@ import {
   getCounters,
   getCountersByPropertyId,
 } from "../controllers/counter.controller";
+import { getCountersService } from "../services/counter.service";
 
 const counterRouter = Router();
 
-counterRouter.get("/", getCounters);
+counterRouter.get("/", getCountersService);
 counterRouter.get("/:id", getCounterById);
 counterRouter.post("/", getCountersByPropertyId);
 

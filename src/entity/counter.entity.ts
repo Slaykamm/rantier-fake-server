@@ -7,8 +7,8 @@ import {
   OneToMany,
 } from "typeorm";
 import { Property } from "./property.entity";
-import { Transactions } from "./transactions.entity";
 import { Indications } from "./indications.entity";
+import { CounterType } from "./counterType.entity";
 
 @Entity()
 export class Counter {
@@ -16,7 +16,7 @@ export class Counter {
   id!: number;
 
   @Column("text")
-  counterType!: string;
+  counterTypeId!: string; // Это должен быть ID типа счетчика
 
   @Column("text")
   counterId!: string;
@@ -34,9 +34,14 @@ export class Counter {
   isActive!: boolean;
 
   @ManyToOne(() => Property, (property) => property.counters)
-  @JoinColumn({ name: "propertyId" }) // это необязательно, если имя колонки совпадает
+  @JoinColumn({ name: "propertyId" })
   property!: Property;
 
-  @OneToMany(() => Indications, (indication) => indication.id)
-  tenants!: Counter[];
+  @OneToMany(() => Indications, (indication) => indication.counterId)
+  indications!: Indications[];
+
+  @ManyToOne(() => CounterType, (counterType) => counterType.counters) // ссылка на поле в сущности которую коннектим
+  // сюда в добавленном поле OneToMany там. обратная ссулка. кот- содержит Counter
+  @JoinColumn({ name: "counterTypeId" }) // наименование поле к коотором коннектим
+  counterType!: CounterType; // создаем поле с сущностью которую сюда подключаем. будет же 1 значение.
 }

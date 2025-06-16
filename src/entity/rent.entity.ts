@@ -42,13 +42,13 @@ export class Rent {
   @Column("float")
   propertyId!: number;
 
-  @OneToMany(() => Transactions, (transaction) => transaction.id)
-  counters!: Rent[];
+  @OneToMany(() => Transactions, (transaction) => transaction.rent)
+  transactions!: Transactions[];
 
-  @OneToMany(() => Tenant, (tenant) => tenant.id)
-  tenants!: Rent[];
+  @OneToMany(() => Tenant, (tenant) => tenant.rentId)
+  tenants!: Tenant[];
 
-  @ManyToOne(() => Property, (property) => property.id)
+  @ManyToOne(() => Property, (property) => property.rents)
   @JoinColumn({ name: "propertyId" }) // это необязательно, если имя колонки совпадает
   rent!: Property;
 }

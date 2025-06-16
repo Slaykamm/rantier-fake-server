@@ -43,15 +43,12 @@ export class Tenant {
   passportNumber: string | undefined;
 
   @Column("text")
-  passportDate: string | undefined;
-
-  @Column("text")
   passportIssued: string | undefined;
 
   @Column("int")
   rentId!: number;
 
-  @ManyToOne(() => Rent, (rent) => rent.id)
+  @ManyToOne(() => Rent, (rent) => rent.tenants)
   @JoinColumn({ name: "rentId" }) // это необязательно, если имя колонки совпадает
   rent!: Rent;
 }

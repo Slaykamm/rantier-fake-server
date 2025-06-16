@@ -28,9 +28,9 @@ export class Property {
   @Column("boolean")
   isRented!: boolean;
 
-  @OneToMany(() => Counter, (counter) => counter.counterId)
+  @OneToMany(() => Counter, (counter) => counter.propertyId)
   counters!: Counter[];
 
-  @OneToMany(() => Rent, (rent) => rent.id)
+  @OneToMany(() => Rent, (rent) => rent.propertyId)
   rents!: Rent[];
 }

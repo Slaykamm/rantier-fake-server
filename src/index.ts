@@ -22,6 +22,8 @@ AppDataSource.initialize()
 
     // Обработка GET-запроса на корневой путь
     app.get("/", (req: Request, res: Response) => {
+      AppDataSource.createQueryBuilder();
+
       // @ts-ignore
       res.send("Привет, это простой сервер на Express!");
     });

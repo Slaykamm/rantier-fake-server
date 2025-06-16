@@ -21,7 +21,7 @@ export class Indications {
   @Column("text")
   createAt!: string;
 
-  @ManyToOne(() => Counter, (counter) => counter.id)
+  @ManyToOne(() => Counter, (counter) => counter.indications)
   @JoinColumn({ name: "counterId" }) // это необязательно, если имя колонки совпадает
   counters!: Counter;
 }
