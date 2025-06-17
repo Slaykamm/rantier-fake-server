@@ -27,7 +27,7 @@ export class Rent {
   @Column("text")
   endContractDate!: string;
 
-  @Column("text")
+  @Column({ type: "text", nullable: true })
   requestIndicatorsDate: string | undefined;
 
   @Column("text")
@@ -48,7 +48,7 @@ export class Rent {
   @OneToMany(() => Tenant, (tenant) => tenant.rentId)
   tenants!: Tenant[];
 
-  @ManyToOne(() => Property, (property) => property.rents)
+  @ManyToOne(() => Property, (property) => property.rent)
   @JoinColumn({ name: "propertyId" }) // это необязательно, если имя колонки совпадает
-  rent!: Property;
+  property!: Property;
 }

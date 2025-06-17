@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { ICounter } from "../models/counter.model";
 import { IResponseDto } from "../models/response.model";
 import * as counterService from "../services/counter.service";
+import { Counter } from "../entity/counter.entity";
 
 export const getCounters = async (req: Request, res: Response) => {
   const counters = await counterService.getCounters();
@@ -27,14 +27,13 @@ export const getCounterById = async (
 
 export const getCountersByPropertyId = async (
   req: Request<{}, {}, { propertyId: number }>,
-  res: Response<IResponseDto<ICounter>>
+  res: Response<IResponseDto<Counter>>
 ) => {
   const propertyId = req.body.propertyId;
 
   try {
     const counters = await counterService.getCountersByPropertyId(propertyId);
     if (!!counters.length) {
-      // @ts-ignore
       res.status(200).json({ status: "success", data: counters });
     } else {
       res.status(200).json({
@@ -49,17 +48,5 @@ export const getCountersByPropertyId = async (
       data: [],
       message: "No counters by propertyId found",
     });
-
-    // const respData = counter.filter((item) => item.propertyId == propertyId);
-
-    // if (!!respData.length) {
-    //   res.status(200).json({ status: "success", data: respData });
-    // } else {
-    //   res.status(200).json({
-    //     status: "success",
-    //     data: [],
-    //     message: "No counters by propertyId found",
-    //   });
-    // }
   }
 };

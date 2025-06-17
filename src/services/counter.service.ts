@@ -2,7 +2,6 @@ import { AppDataSource } from "../database/data-source";
 import { Counter } from "../entity/counter.entity";
 
 const counterRepository = AppDataSource.getRepository(Counter);
-// .find({relations: ['counterType']});
 
 export const getCounters = async () => {
   const respData = await counterRepository.find({ relations: ["counterType"] });

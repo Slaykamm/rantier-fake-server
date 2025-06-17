@@ -1,11 +1,15 @@
 import { Request, Response } from "express";
-import { IRent } from "../models/rent.model";
 import { IResponseDto } from "../models/response.model";
-const rent: IRent[] = require("../../mocks/rent.json");
+import * as rentService from "../services/rent.service";
+import { Rent } from "../entity/rent.entity";
 
-export const getRents = (req: Request, res: Response<IResponseDto<IRent>>) => {
+export const getRents = async (
+  req: Request,
+  res: Response<IResponseDto<Rent>>
+) => {
   try {
-    res.status(200).json({ status: "success", data: rent });
+    const rents = await rentService.getRents();
+    res.status(200).json({ status: "success", data: rents });
   } catch {
     res
       .status(500)
@@ -13,14 +17,15 @@ export const getRents = (req: Request, res: Response<IResponseDto<IRent>>) => {
   }
 };
 
-export const getRentById = (
+export const getRentById = async (
   req: Request<{ id: number }>,
-  res: Response<IResponseDto<IRent>>
+  res: Response<IResponseDto<Rent>>
 ) => {
   const id = req.params.id;
   try {
-    if (rent[Number(id) - 1]) {
-      res.status(200).json({ status: "success", data: [rent[Number(id) - 1]] });
+    const rent = await rentService.getRentById(id);
+    if (!!rent?.length) {
+      res.status(200).json({ status: "success", data: rent });
     } else {
       res
         .status(500)
@@ -33,21 +38,17 @@ export const getRentById = (
   }
 };
 
-export const getRentByPropertyId = (
+export const getRentByPropertyId = async (
   req: Request<{}, {}, { propertyId: number }>,
-  res: Response<IResponseDto<IRent>>
+  res: Response<IResponseDto<Rent>>
 ) => {
   try {
-    const search = rent.find(
-      (item) =>
-        item.propertyId.id === req.body.propertyId &&
-        !!item.isActiveRent &&
-        new Date() < new Date(item.endContractDate)
-    );
-    if (!!search) {
-      res.status(200).json({ status: "success", data: [search] });
+    const propertyId = req.body.propertyId;
+    const search = await rentService.getRentByPropertyId(propertyId);
+    if (!!search?.length) {
+      res.status(200).json({ status: "success", data: search });
     } else {
-      res.status(500).json({
+      res.status(200).json({
         status: "error",
         message: "No active rent for this property",
       });

@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
 import { IResponseDto } from "../models/response.model";
-import { IProperty } from "../models/property.model";
-const property: IProperty[] = require("../../mocks/property.json");
+import * as properyService from "../services/property.service";
+import { Property } from "../entity/property.entity";
 
-export const getProperty = (
+export const getProperty = async (
   req: Request,
-  res: Response<IResponseDto<IProperty>>
+  res: Response<IResponseDto<Property>>
 ) => {
   try {
-    res.status(200).json({ status: "success", data: property });
+    const properties = await properyService.getProperties();
+    res.status(200).json({ status: "success", data: properties });
   } catch {
     res.status(500).json({
       status: "error",
@@ -17,16 +18,15 @@ export const getProperty = (
   }
 };
 
-export const getPropertyById = (
+export const getPropertyById = async (
   req: Request<{ id: number }>,
-  res: Response<IResponseDto<IProperty>>
+  res: Response<IResponseDto<Property>>
 ) => {
   const id = req.params.id;
   try {
-    if (property[Number(id) - 1]) {
-      res
-        .status(200)
-        .json({ status: "success", data: [property[Number(id) - 1]] });
+    const property = await properyService.getPropertyById(id);
+    if (!!property?.length) {
+      res.status(200).json({ status: "success", data: property });
     } else {
       res
         .status(500)

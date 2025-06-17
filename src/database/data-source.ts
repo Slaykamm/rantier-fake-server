@@ -12,7 +12,7 @@ export const AppDataSource = new DataSource({
   type: "sqlite",
   database: "rantier.sqlite", // Файл БД
   synchronize: true,
-  logging: true,
+  // logging: true,
   entities: [
     Property,
     Counter,

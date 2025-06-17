@@ -1,53 +1,25 @@
 import { Request, Response } from "express";
 import { IResponseDto } from "../models/response.model";
-import {
-  ITransactions,
-  ITransactionsResponseDto,
-} from "../models/transactions.model";
-import { getSumFromTransaction } from "../utils/untils";
+import { ITransactionsResponseDto } from "../models/transactions.model";
+import * as transactionService from "../services/transactions.service";
 
-import { transactions } from "../mocks/transactions";
+export const getTransactions = async (req: Request, res: Response) => {
+  const respData = await transactionService.getTransactions();
+  res.send(respData);
+};
 
-export const getTransactionsByRentId = (
+export const getTransactionsByRentId = async (
   req: Request<{}, {}, { rentId: number }>,
   res: Response<IResponseDto<ITransactionsResponseDto>>
 ) => {
   const rentId = req.body.rentId;
 
   try {
-    const filteredByRentId = transactions?.filter(
-      (transaction) => transaction.rentId.id == rentId
-    );
-
-    const main = filteredByRentId.filter(
-      (invoice: any) => invoice.kindOfPayment == "main"
-    );
-    const mainInvoices = main.filter((invoice) => invoice.type == "invoice");
-    const mainPayments = main.filter((invoice) => invoice.type == "payment");
-
-    const service = filteredByRentId.filter(
-      (invoice) => invoice.kindOfPayment == "service"
-    );
-    const serviceInvoices = service.filter(
-      (invoice) => invoice.type == "invoice"
-    );
-    const servicePayments = service.filter(
-      (invoice) => invoice.type == "payment"
-    );
-
-    const mainInvoiceSum = getSumFromTransaction(mainInvoices);
-    const mainPaymentsSum = getSumFromTransaction(mainPayments);
-
-    const serviceInvoicesSum = getSumFromTransaction(serviceInvoices);
-    const servicePaymentsSum = getSumFromTransaction(servicePayments);
-
-    const mainTotal = mainInvoiceSum - mainPaymentsSum;
-    const serviceTotal = serviceInvoicesSum - servicePaymentsSum;
-    const total = mainTotal + serviceTotal;
+    const respData = await transactionService.getTransactionsByRentId(rentId);
 
     res.status(200).json({
       status: "success",
-      data: [{ mainTotal, serviceTotal, total }],
+      data: [respData],
     });
   } catch (e) {
     res.status(500).json({

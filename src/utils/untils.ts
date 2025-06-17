@@ -2,13 +2,13 @@
 //   return !isNaN(parseFloat(str)) && isFinite(str);
 // }
 
-import { ITransactions } from "../models/transactions.model";
+import { Transactions } from "../entity/transactions.entity";
 
 function isNumber(value: number) {
   return typeof value === "number" && !isNaN(value) && isFinite(value);
 }
 
-export const getSumFromTransaction = (array: ITransactions[]): number => {
+export const getSumFromTransaction = (array: Transactions[]): number => {
   // @ts-ignore
   const sum: number = array?.reduce((acc, item) => {
     if (isNumber(item.amount)) {

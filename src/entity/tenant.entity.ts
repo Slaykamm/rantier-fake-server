@@ -30,19 +30,22 @@ export class Tenant {
   @Column("text")
   email!: string;
 
-  @Column("int")
+  @Column({ type: "int", nullable: true })
   tgId: number | undefined;
 
-  @Column("text")
+  @Column({ type: "text", nullable: true })
   tgNick: string | undefined;
 
-  @Column("text")
+  @Column({ type: "text", nullable: true })
   passportSeries: string | undefined;
 
-  @Column("text")
+  @Column({ type: "text", nullable: true })
   passportNumber: string | undefined;
 
-  @Column("text")
+  @Column({ type: "text", nullable: true })
+  passportDate: string | undefined;
+
+  @Column({ type: "text", nullable: true })
   passportIssued: string | undefined;
 
   @Column("int")

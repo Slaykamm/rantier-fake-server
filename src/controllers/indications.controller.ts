@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import { IResponseDto } from "../models/response.model";
-import { IIndications } from "../models/indications.model";
-const indications: IIndications[] = require("../../mocks/indications.json");
 import * as indicationsService from "../services/indications.service";
 import { Indications } from "../entity/indications.entity";
 

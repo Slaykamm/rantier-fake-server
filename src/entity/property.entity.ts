@@ -13,10 +13,10 @@ export class Property {
   @Column("text")
   address!: string;
 
-  @Column("text")
+  @Column({ type: "text", nullable: true })
   label: string | undefined;
 
-  @Column("text")
+  @Column({ type: "text", nullable: true })
   image: string | undefined;
 
   @Column("int")
@@ -31,6 +31,6 @@ export class Property {
   @OneToMany(() => Counter, (counter) => counter.propertyId)
   counters!: Counter[];
 
-  @OneToMany(() => Rent, (rent) => rent.propertyId)
-  rents!: Rent[];
+  @OneToMany(() => Rent, (rent) => rent.property)
+  rent!: Rent[];
 }
