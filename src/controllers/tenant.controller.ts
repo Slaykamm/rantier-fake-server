@@ -34,7 +34,7 @@ export const getTenantsByRentId = async (
 ) => {
   try {
     const rentId = req?.body?.rentId;
-    const respData = await tenantService.getTenantById(rentId);
+    const respData = await tenantService.getTenantsByRentId(rentId);
     if (!!respData.length) {
       res.status(200).json({ status: "success", data: respData });
     } else {

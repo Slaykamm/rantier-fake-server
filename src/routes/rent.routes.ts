@@ -4,11 +4,13 @@ import {
   getRentByPropertyId,
   getRents,
 } from "../controllers/rent.controller";
+import { authenticate } from "../auth/auth";
 
 const rentRouter = Router();
 
-rentRouter.get("/", getRents);
-rentRouter.get("/:id", getRentById);
-rentRouter.post("/", getRentByPropertyId);
+rentRouter.get("/", authenticate, getRents);
+// @ts-ignore
+rentRouter.get("/:id", authenticate, getRentById);
+rentRouter.post("/", authenticate, getRentByPropertyId);
 
 export default rentRouter;

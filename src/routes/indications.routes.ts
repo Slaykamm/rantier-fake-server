@@ -4,13 +4,15 @@ import {
   getIndicationsById,
   postIndicationsByCounterId,
 } from "../controllers/indications.controller";
+import { authenticate } from "../auth/auth";
 
 const indicationsRouter = Router();
 
-indicationsRouter.get("/", getIndications);
+indicationsRouter.get("/", authenticate, getIndications);
 
-indicationsRouter.get("/:id", getIndicationsById);
+// @ts-ignore
+indicationsRouter.get("/:id", authenticate, getIndicationsById);
 
-indicationsRouter.post("/", postIndicationsByCounterId);
+indicationsRouter.post("/", authenticate, postIndicationsByCounterId);
 
 export default indicationsRouter;

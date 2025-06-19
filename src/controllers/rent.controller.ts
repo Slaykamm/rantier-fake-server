@@ -56,7 +56,7 @@ export const getRentByPropertyId = async (
   } catch (e) {
     res.status(500).json({
       status: "error",
-      message: "No active rent for this property",
+      message: `No active rent for this property ${e}`,
     });
   }
 };

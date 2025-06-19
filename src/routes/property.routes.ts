@@ -3,10 +3,12 @@ import {
   getProperty,
   getPropertyById,
 } from "../controllers/property.controller";
+import { authenticate } from "../auth/auth";
 
 const propertyRouter = Router();
 
-propertyRouter.get("/", getProperty);
-propertyRouter.get("/:id", getPropertyById);
+propertyRouter.get("/", authenticate, getProperty);
+// @ts-ignore
+propertyRouter.get("/:id", authenticate, getPropertyById);
 
 export default propertyRouter;

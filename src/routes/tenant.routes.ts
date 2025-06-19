@@ -4,11 +4,14 @@ import {
   getTenants,
   getTenantsByRentId,
 } from "../controllers/tenant.controller";
+import { authenticate } from "../auth/auth";
 
 const tenantRouter = Router();
 
-tenantRouter.get("/", getTenants);
-tenantRouter.get("/:id", getTenantById);
-tenantRouter.post("/", getTenantsByRentId);
+tenantRouter.get("/", authenticate, getTenants);
+
+// @ts-ignore
+tenantRouter.get("/:id", authenticate, getTenantById);
+tenantRouter.post("/", authenticate, getTenantsByRentId);
 
 export default tenantRouter;

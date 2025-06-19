@@ -5,13 +5,29 @@ import propertyRouter from "./routes/property.routes";
 import rentRouter from "./routes/rent.routes";
 import tenantRouter from "./routes/tenant.routes";
 import treansactionRouter from "./routes/transactions.routes";
+import admin from "firebase-admin";
+import express, { Request, Response, NextFunction, Router } from "express";
+const serviceAccount = require("../firebase-adminsdk.json");
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: admin.auth.DecodedIdToken;
+    }
+  }
+}
 
 // Импортируем необходимые модули
-const express = require("express");
+// const express = require("express");
 const app = express();
 const port = 3000;
 
 const service_company = require("../mocks/service_company.json");
+
+admin.initializeApp({
+  // @ts-ignore
+  credential: admin.credential.cert(serviceAccount),
+});
 
 // Middleware для обработки JSON-запросов
 app.use(express.json());
@@ -29,6 +45,7 @@ AppDataSource.initialize()
     });
 
     // // COUNTERS
+
     app.use("/counter", counterRouter);
 
     // INDICATORS
