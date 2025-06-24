@@ -13,6 +13,9 @@ export class Property {
   @Column("text")
   address!: string;
 
+  @Column("text")
+  userId!: string;
+
   @Column({ type: "text", nullable: true })
   label: string | undefined;
 

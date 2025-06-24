@@ -8,7 +8,9 @@ export const getProperty = async (
   res: Response<IResponseDto<Property>>
 ) => {
   try {
-    const properties = await properyService.getProperties();
+    const properties = await properyService.getPropertiesByUserId(
+      req?.user?.email || ""
+    );
     res.status(200).json({ status: "success", data: properties });
   } catch {
     res.status(500).json({

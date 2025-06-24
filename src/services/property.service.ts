@@ -5,8 +5,8 @@ const properyRepository = AppDataSource.getRepository(Property);
 
 //
 
-export const getProperties = async () => {
-  const respData = await properyRepository.find();
+export const getPropertiesByUserId = async (userId: string) => {
+  const respData = await properyRepository.find({ where: { userId } });
   return respData;
 };
 
