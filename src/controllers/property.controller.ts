@@ -8,6 +8,7 @@ export const getProperty = async (
   res: Response<IResponseDto<Property>>
 ) => {
   try {
+    console.log("test req", req?.user?.firebase?.identities.email?.[0]);
     const properties = await properyService.getPropertiesByUserId(
       req?.user?.email || ""
     );

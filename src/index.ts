@@ -7,6 +7,7 @@ import tenantRouter from "./routes/tenant.routes";
 import treansactionRouter from "./routes/transactions.routes";
 import admin from "firebase-admin";
 import express, { Request, Response, NextFunction, Router } from "express";
+import userRouter from "./routes/user.routes";
 const serviceAccount = require("../firebase-adminsdk.json");
 
 declare global {
@@ -50,6 +51,9 @@ AppDataSource.initialize()
 
     // INDICATORS
     app.use("/indications", indicationsRouter);
+
+    // USER
+    app.use("/user", userRouter);
 
     // PROPERTY
     app.use("/property", propertyRouter);

@@ -1,6 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import { Counter } from "./counter.entity";
 import { Rent } from "./rent.entity";
+import { User } from "./user.entity";
 
 @Entity()
 export class Property {
@@ -10,11 +18,11 @@ export class Property {
   @Column("text")
   name!: string;
 
-  @Column("text")
+  @Column("int")
   address!: string;
 
   @Column("text")
-  userId!: string;
+  userId!: number;
 
   @Column({ type: "text", nullable: true })
   label: string | undefined;
@@ -36,4 +44,8 @@ export class Property {
 
   @OneToMany(() => Rent, (rent) => rent.property)
   rent!: Rent[];
+
+  @ManyToOne(() => User, (user) => user.property)
+  @JoinColumn({ name: "userId" })
+  user!: User;
 }
