@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   getTenantById,
   getTenants,
-  getTenantsByRentId,
+  getTenantsByPropertyId,
 } from "../controllers/tenant.controller";
 import { authenticate } from "../auth/auth";
 
@@ -12,6 +12,6 @@ tenantRouter.get("/", authenticate, getTenants);
 
 // @ts-ignore
 tenantRouter.get("/:id", authenticate, getTenantById);
-tenantRouter.post("/", authenticate, getTenantsByRentId);
+tenantRouter.post("/", authenticate, getTenantsByPropertyId);
 
 export default tenantRouter;

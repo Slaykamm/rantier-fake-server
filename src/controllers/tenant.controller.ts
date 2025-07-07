@@ -28,13 +28,14 @@ export const getTenantById = async (
   }
 };
 
-export const getTenantsByRentId = async (
-  req: Request<{}, {}, { rentId: number }>,
+export const getTenantsByPropertyId = async (
+  req: Request<{}, {}, { propertyId: number }>,
   res: Response<IResponseDto<Tenant>>
 ) => {
   try {
-    const rentId = req?.body?.rentId;
-    const respData = await tenantService.getTenantsByRentId(rentId);
+    const propertyId = req?.body?.propertyId;
+
+    const respData = await tenantService.getTenantsByPropertyId(propertyId);
     if (!!respData.length) {
       res.status(200).json({ status: "success", data: respData });
     } else {

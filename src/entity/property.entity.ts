@@ -18,7 +18,7 @@ export class Property {
   @Column("text")
   name!: string;
 
-  @Column("int")
+  @Column("text")
   address!: string;
 
   @Column("text")

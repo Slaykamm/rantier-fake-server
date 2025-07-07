@@ -15,8 +15,8 @@ export class Tenant {
   @Column("text")
   firstName!: string;
 
-  @Column("text")
-  secondName!: string;
+  @Column({ type: "text", nullable: true })
+  secondName: string | undefined;
 
   @Column("text")
   lastName!: string;
@@ -27,8 +27,8 @@ export class Tenant {
   @Column("text")
   phone!: string;
 
-  @Column("text")
-  email!: string;
+  @Column({ type: "text", nullable: true })
+  email: string | undefined;
 
   @Column({ type: "int", nullable: true })
   tgId: number | undefined;

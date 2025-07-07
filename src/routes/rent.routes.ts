@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  createRentByProperyId,
   getRentById,
   getRentByPropertyId,
   getRents,
@@ -12,5 +13,6 @@ rentRouter.get("/", authenticate, getRents);
 // @ts-ignore
 rentRouter.get("/:id", authenticate, getRentById);
 rentRouter.post("/", authenticate, getRentByPropertyId);
+rentRouter.post("/create", authenticate, createRentByProperyId);
 
 export default rentRouter;

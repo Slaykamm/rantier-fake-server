@@ -28,7 +28,6 @@ export const createUserByUserId = async (userId: string) => {
       });
 
       await userRepository.save(newUser);
-      console.log("test 111111111111111111");
     });
 
     return {

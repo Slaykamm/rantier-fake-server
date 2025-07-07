@@ -1,5 +1,6 @@
 import { AppDataSource } from "../database/data-source";
 import { Tenant } from "../entity/tenant.entity";
+import { getRentByPropertyId } from "./rent.service";
 
 const tenantRepository = AppDataSource.getRepository(Tenant);
 
@@ -18,9 +19,15 @@ export const getTenantById = async (id: number) => {
   return respData;
 };
 
-export const getTenantsByRentId = async (rentId: number) => {
+export const getTenantsByPropertyId = async (propertyId: number) => {
+  const rent = await getRentByPropertyId(propertyId);
+
+  if (!rent) {
+    return [];
+  }
+
   const rentsResult = await tenantRepository.find({
-    where: { rentId },
+    where: { rentId: rent.id },
     relations: ["rent"],
   });
 
