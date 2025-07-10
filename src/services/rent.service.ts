@@ -125,3 +125,77 @@ export const createRentByProperyIdAction = async (props: IRentCreateDto) => {
     };
   }
 };
+
+export const finishRentByProperyIdAction = async (propertyId: number) => {
+  try {
+    const result = await AppDataSource.transaction(
+      async (transactionalEntityManager) => {
+        // 1. Находим самую свежую активную аренду
+        const mostRecentActiveRent = await transactionalEntityManager
+          .createQueryBuilder(Rent, "rent")
+          .leftJoinAndSelect("rent.property", "property")
+          .where("rent.propertyId = :propertyId", { propertyId })
+          .andWhere("rent.isActiveRent = :isActiveRent", { isActiveRent: true })
+          .andWhere("rent.endContractDate >= :currentDate", {
+            currentDate: new Date(),
+          })
+          .orderBy("rent.createAt", "DESC")
+          .getOne();
+
+        // 2. Если запись найдена, обновляем её isActiveRent на false
+        if (mostRecentActiveRent) {
+          await transactionalEntityManager
+            .createQueryBuilder()
+            .update(Rent)
+            .set({ isActiveRent: false })
+            .where("id = :id", { id: mostRecentActiveRent.id })
+            .execute();
+        }
+
+        return mostRecentActiveRent; // Возвращаем запись, которую деактивировали
+      }
+    );
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      message: `Error while ending rent ${e}`,
+    };
+  }
+};
+
+export const findRentByProperyIdAction = async (propertyId: number) => {
+  try {
+    const result = await AppDataSource.transaction(
+      async (transactionalEntityManager) => {
+        // 1. Находим самую свежую активную аренду
+        const mostRecentActiveRent = await transactionalEntityManager
+          .createQueryBuilder(Rent, "rent")
+          .leftJoinAndSelect("rent.property", "property")
+          .where("rent.propertyId = :propertyId", { propertyId })
+          .andWhere("rent.isActiveRent = :isActiveRent", { isActiveRent: true })
+          .andWhere("rent.endContractDate >= :currentDate", {
+            currentDate: new Date(),
+          })
+          .orderBy("rent.createAt", "DESC")
+          .getOne();
+
+        return mostRecentActiveRent; // Возвращаем запись, которую деактивировали
+      }
+    );
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      message: `Error while ending rent ${e}`,
+    };
+  }
+};

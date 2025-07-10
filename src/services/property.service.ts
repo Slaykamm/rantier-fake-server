@@ -5,6 +5,7 @@ import { Indications } from "../entity/indications.entity";
 import { Property } from "../entity/property.entity";
 import { User } from "../entity/user.entity";
 import { IPropertyCreateDto } from "../models/property.model";
+import { findRentByProperyIdAction } from "./rent.service";
 import { getUserByUserId } from "./user.service";
 
 const properyRepository = AppDataSource.getRepository(Property);
@@ -17,7 +18,18 @@ export const getPropertiesByUserId = async (userId: string) => {
     const respData = await properyRepository.find({
       where: { userId: user.id },
     });
-    return respData;
+
+    const enrichedProperties: Property[] = [];
+
+    for (const property of respData) {
+      const result = await findRentByProperyIdAction(property.id);
+      enrichedProperties.push({
+        ...property,
+        isRented: !!result.data?.isActiveRent,
+      });
+    }
+
+    return enrichedProperties;
   }
 };
 

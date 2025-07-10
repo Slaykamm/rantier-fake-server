@@ -32,15 +32,15 @@ export const postIndicationsByCounterId = async (
     const counterId = req.body?.counterId;
     const filteredTwoLatestIndications =
       await indicationsService.postIndicationsByCounterId(counterId);
-    // @ts-ignore
-    if (!!filteredTwoLatestIndications.length) {
+    if (!!filteredTwoLatestIndications?.length) {
       res.status(200).json({
         status: "success",
         data: filteredTwoLatestIndications,
       });
     } else {
       res.status(200).json({
-        status: "error",
+        status: "success",
+        data: [],
         message: "No any indications for this counterId",
       });
     }

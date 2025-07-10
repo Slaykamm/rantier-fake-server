@@ -83,3 +83,27 @@ export const createRentByProperyId = async (
     });
   }
 };
+
+export const finishRentByPropertyId = async (
+  req: Request<{}, {}, { propertyId: number }>,
+  res: Response<IResponseDto<Rent>>
+) => {
+  try {
+    const result = await rentService.finishRentByProperyIdAction(
+      req.body.propertyId
+    );
+    if (!!result?.success) {
+      res.status(200).json({ status: "success" });
+    } else {
+      res.status(200).json({
+        status: "error",
+        message: result?.message,
+      });
+    }
+  } catch (e) {
+    res.status(500).json({
+      status: "error",
+      message: `No active rent for this property ${e}`,
+    });
+  }
+};

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { IResponseDto } from "../models/response.model";
 import * as counterService from "../services/counter.service";
 import { Counter } from "../entity/counter.entity";
+import { ICounterCreateDto } from "../models/counter.model";
 
 export const getCounters = async (req: Request, res: Response) => {
   const counters = await counterService.getCounters();
@@ -47,6 +48,27 @@ export const getCountersByPropertyId = async (
       status: "success",
       data: [],
       message: "No counters by propertyId found",
+    });
+  }
+};
+
+export const createCounter = async (
+  req: Request<{}, {}, ICounterCreateDto>,
+  res: Response<IResponseDto<Counter>>
+) => {
+  const propertyId = req.body.propertyId;
+
+  try {
+    if (!!propertyId) {
+      const counter = await counterService.createCounterAction(req.body);
+      if (!!counter.success) {
+        res.status(200).json({ status: "success" });
+      }
+    }
+  } catch (e) {
+    res.status(500).json({
+      status: "error",
+      message: "Error with counter creation",
     });
   }
 };

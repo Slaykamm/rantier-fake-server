@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createRentByProperyId,
+  finishRentByPropertyId,
   getRentById,
   getRentByPropertyId,
   getRents,
@@ -14,5 +15,6 @@ rentRouter.get("/", authenticate, getRents);
 rentRouter.get("/:id", authenticate, getRentById);
 rentRouter.post("/", authenticate, getRentByPropertyId);
 rentRouter.post("/create", authenticate, createRentByProperyId);
+rentRouter.post("/finish", authenticate, finishRentByPropertyId);
 
 export default rentRouter;

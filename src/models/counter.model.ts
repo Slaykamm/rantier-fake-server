@@ -14,4 +14,5 @@ export interface ICounterCreateDto
   > {
   counterType: string;
   counterValue?: number;
+  propertyId?: number;
 }
