@@ -49,8 +49,9 @@ export const getRentByPropertyId = async (
     if (!!search) {
       res.status(200).json({ status: "success", data: [search] });
     } else {
-      res.status(200).json({
+      res.status(205).json({
         status: "error",
+        data: [],
         message: "No active rent for this property",
       });
     }

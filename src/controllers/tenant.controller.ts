@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { IResponseDto } from "../models/response.model";
 import * as tenantService from "../services/tenant.service";
 import { Tenant } from "../entity/tenant.entity";
+import { ISecondaryTenantCreateDto } from "../models/tenant.model";
 
 export const getTenants = async (req: Request, res: Response) => {
   const tenantsData = await tenantService.getTenants();
@@ -48,6 +49,26 @@ export const getTenantsByPropertyId = async (
     res.status(500).json({
       status: "error",
       message: "No active rent for this property",
+    });
+  }
+};
+
+export const createTenant = async (
+  req: Request<{}, {}, ISecondaryTenantCreateDto>,
+  res: Response<IResponseDto<Tenant>>
+) => {
+  try {
+    const result = await tenantService.createTenantAction(req?.body);
+    console.log("test result", result);
+    if (!!result?.success) {
+      res.status(200).json({ status: "success" });
+    } else {
+      res.status(500).json({ status: "error" });
+    }
+  } catch (e) {
+    res.status(500).json({
+      status: "error",
+      message: "Error with creating secondary tenant",
     });
   }
 };

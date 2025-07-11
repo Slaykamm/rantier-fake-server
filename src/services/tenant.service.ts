@@ -1,5 +1,6 @@
 import { AppDataSource } from "../database/data-source";
 import { Tenant } from "../entity/tenant.entity";
+import { ISecondaryTenantCreateDto } from "../models/tenant.model";
 import { getRentByPropertyId } from "./rent.service";
 
 const tenantRepository = AppDataSource.getRepository(Tenant);
@@ -32,4 +33,51 @@ export const getTenantsByPropertyId = async (propertyId: number) => {
   });
 
   return rentsResult;
+};
+
+export const createTenantAction = async (props: ISecondaryTenantCreateDto) => {
+  const {
+    firstName,
+    isPrimary,
+    lastName,
+    phone,
+    email,
+    passportDate,
+    passportIssued,
+    passportNumber,
+    passportSeries,
+    tgId,
+    tgUsername,
+    rentId,
+  } = props;
+
+  try {
+    await AppDataSource.manager.transaction(async (transactionManager) => {
+      const tenantRepository = transactionManager.getRepository(Tenant);
+      const newTenant = tenantRepository.create({
+        firstName,
+        lastName,
+        tenantType: isPrimary ? 1 : 2,
+        phone,
+        email,
+        tgId,
+        tgNick: tgUsername,
+        passportSeries,
+        passportNumber,
+        passportIssued,
+        passportDate,
+        rentId,
+      });
+
+      await tenantRepository.save(newTenant);
+    });
+    return {
+      success: true,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      message: `Error while ending rent ${e}`,
+    };
+  }
 };

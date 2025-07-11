@@ -11,3 +11,7 @@ export interface ITenantCreateDto {
   passportDate?: string;
   passportIssued?: string;
 }
+
+export interface ISecondaryTenantCreateDto extends ITenantCreateDto {
+  rentId?: number;
+}
