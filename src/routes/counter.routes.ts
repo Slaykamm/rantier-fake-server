@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createCounter,
+  deleteCounter,
   getCounterById,
   getCounters,
   getCountersByPropertyId,
@@ -14,5 +15,6 @@ counterRouter.get("/", authenticate, getCounters);
 counterRouter.get("/:id", authenticate, getCounterById);
 counterRouter.post("/", authenticate, getCountersByPropertyId);
 counterRouter.post("/create", authenticate, createCounter);
+counterRouter.post("/delete", authenticate, deleteCounter);
 
 export default counterRouter;

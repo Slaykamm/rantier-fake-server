@@ -72,3 +72,24 @@ export const createCounter = async (
     });
   }
 };
+
+export const deleteCounter = async (
+  req: Request<{}, {}, { counterId: number }>,
+  res: Response<IResponseDto<Counter>>
+) => {
+  const counterId = req.body.counterId;
+
+  try {
+    if (!!counterId) {
+      const counter = await counterService.deleteCounterAction(counterId);
+      if (!!counter.success) {
+        res.status(200).json({ status: "success" });
+      }
+    }
+  } catch (e) {
+    res.status(500).json({
+      status: "error",
+      message: "Error with counter deleting",
+    });
+  }
+};

@@ -93,3 +93,45 @@ export const createCounterAction = async (props: ICounterCreateDto) => {
     };
   }
 };
+export const deleteCounterAction = async (counterId: number) => {
+  try {
+    if (!counterId) {
+      return {
+        success: false,
+        message: "counterId absent!",
+      };
+    }
+
+    const result = await AppDataSource.transaction(
+      async (transactionalManager) => {
+        const counterRepo = transactionalManager.getRepository(Counter);
+        const indicationsRepository =
+          transactionalManager.getRepository(Indications);
+
+        // 1. Удаляем все показания, связанные с этим счетчиком
+        await indicationsRepository.delete({
+          counterId,
+        });
+
+        // 2. Удаляем сам счетчик
+        const deleteResult = await counterRepo.delete({ id: counterId });
+
+        if (deleteResult.affected === 0) {
+          throw new Error("Counter not found");
+        }
+
+        return { success: true };
+      }
+    );
+
+    return {
+      success: true,
+      message: "Counter and all its indications deleted successfully",
+    };
+  } catch (e) {
+    return {
+      success: false,
+      message: `Error while deleting counter`,
+    };
+  }
+};
