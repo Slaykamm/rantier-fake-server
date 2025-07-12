@@ -13,7 +13,6 @@ export const getProperty = async (
     const properties = await properyService.getPropertiesByUserId(
       req?.user?.email || ""
     );
-    // @ts-ignore
     res.status(200).json({ status: "success", data: properties });
   } catch {
     res.status(500).json({

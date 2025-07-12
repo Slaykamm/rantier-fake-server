@@ -81,3 +81,27 @@ export const createTenantAction = async (props: ISecondaryTenantCreateDto) => {
     };
   }
 };
+
+export const deleteTenantAction = async (tenantId: number) => {
+  try {
+    if (!tenantId) {
+      return {
+        success: false,
+        message: "tenantId absent!",
+      };
+    }
+    await AppDataSource.manager.transaction(async (transactionManager) => {
+      const tenantRepository = transactionManager.getRepository(Tenant);
+
+      await tenantRepository.delete({ id: tenantId });
+    });
+    return {
+      success: true,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      message: `Error while deleting tenant: ${e}`,
+    };
+  }
+};

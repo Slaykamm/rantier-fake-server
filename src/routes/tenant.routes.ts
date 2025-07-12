@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createTenant,
+  deleteTenant,
   getTenantById,
   getTenants,
   getTenantsByPropertyId,
@@ -15,5 +16,6 @@ tenantRouter.get("/", authenticate, getTenants);
 tenantRouter.get("/:id", authenticate, getTenantById);
 tenantRouter.post("/", authenticate, getTenantsByPropertyId);
 tenantRouter.post("/create", authenticate, createTenant);
+tenantRouter.post("/delete", authenticate, deleteTenant);
 
 export default tenantRouter;

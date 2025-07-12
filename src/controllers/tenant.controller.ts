@@ -59,7 +59,6 @@ export const createTenant = async (
 ) => {
   try {
     const result = await tenantService.createTenantAction(req?.body);
-    console.log("test result", result);
     if (!!result?.success) {
       res.status(200).json({ status: "success" });
     } else {
@@ -69,6 +68,25 @@ export const createTenant = async (
     res.status(500).json({
       status: "error",
       message: "Error with creating secondary tenant",
+    });
+  }
+};
+
+export const deleteTenant = async (
+  req: Request<{}, {}, { tenantId: number }>,
+  res: Response<IResponseDto<Tenant>>
+) => {
+  try {
+    const result = await tenantService.deleteTenantAction(req?.body?.tenantId);
+    if (!!result?.success) {
+      res.status(200).json({ status: "success" });
+    } else {
+      res.status(500).json({ status: "error" });
+    }
+  } catch (e) {
+    res.status(500).json({
+      status: "error",
+      message: "Error with deleting secondary tenant",
     });
   }
 };
