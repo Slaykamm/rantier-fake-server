@@ -17,3 +17,13 @@ export const getSumFromTransaction = (array: Transactions[]): number => {
   }, 0 as number);
   return sum;
 };
+
+export const getTgUsername = (tgUsername?: string) => {
+  if (!tgUsername) {
+    return "";
+  }
+  if (tgUsername[0] === "@") {
+    return tgUsername;
+  }
+  return "@" + tgUsername;
+};
