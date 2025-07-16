@@ -2,6 +2,8 @@ import { AppDataSource } from "../database/data-source";
 import { User } from "../entity/user.entity";
 import { IUpdateUserDto } from "../models/user.model";
 import { getTgUsername } from "../utils/untils";
+import path from "path";
+import fs from "fs";
 
 const userRepository = AppDataSource.getRepository(User);
 
@@ -46,7 +48,7 @@ export const createUserByUserId = async (userId: string) => {
 };
 
 export const updateUserDataAction = async (props: IUpdateUserDto) => {
-  const { tgId, userId, firstName, lastName, tgUsername } = props;
+  const { tgId, userId, firstName, lastName, tgUsername, avatarPath } = props;
   try {
     if (!userId) {
       return {
@@ -62,16 +64,17 @@ export const updateUserDataAction = async (props: IUpdateUserDto) => {
 
         const updateData = {
           tgId,
-          // avatar,
           firstName,
           lastName,
           tgNickname: getTgUsername(tgUsername),
+          avatar: avatarPath,
         };
 
         const dataToSave = { ...oldUserData, ...updateData };
 
-        console.log("test props3", oldUserData);
-        console.log("test props2", dataToSave);
+        console.log("test props1", updateData);
+        console.log("test props2", oldUserData);
+        console.log("test props3", dataToSave);
         await usersRepository.save(dataToSave);
 
         return { success: true };
@@ -86,6 +89,38 @@ export const updateUserDataAction = async (props: IUpdateUserDto) => {
     return {
       success: false,
       message: `Error while update userData`,
+    };
+  }
+};
+
+export const updateUserAvatar = async (userId: string, avatarPath: string) => {
+  try {
+    const user = await userRepository.findOneBy({ userId });
+    if (!user) {
+      return {
+        success: false,
+        message: "User not found",
+      };
+    }
+
+    // Delete old avatar if exists
+    if (user.avatar && fs.existsSync(user.avatar)) {
+      fs.unlinkSync(user.avatar);
+    }
+
+    user.avatar = avatarPath;
+    await userRepository.save(user);
+
+    return {
+      success: true,
+      data: {
+        avatarUrl: `/uploads/${path.basename(avatarPath)}`,
+      },
+    };
+  } catch (e) {
+    return {
+      success: false,
+      message: `Error updating avatar: ${e}`,
     };
   }
 };

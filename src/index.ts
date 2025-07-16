@@ -8,12 +8,17 @@ import treansactionRouter from "./routes/transactions.routes";
 import admin from "firebase-admin";
 import express, { Request, Response, NextFunction, Router } from "express";
 import userRouter from "./routes/user.routes";
+import multer from "multer";
+import cors from "cors";
+import path from "path";
 const serviceAccount = require("../firebase-adminsdk.json");
 
+// Type declarations
 declare global {
   namespace Express {
     interface Request {
       user?: admin.auth.DecodedIdToken;
+      file?: Express.Multer.File;
     }
   }
 }
@@ -31,7 +36,9 @@ admin.initializeApp({
 });
 
 // Middleware для обработки JSON-запросов
+app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 AppDataSource.initialize()
   .then(() => {
@@ -106,3 +113,9 @@ AppDataSource.initialize()
     });
   })
   .catch((error) => console.log("Database connection error:", error));
+
+// Cleanup on exit
+process.on("SIGINT", () => {
+  console.log("Shutting down server...");
+  process.exit(0);
+});
