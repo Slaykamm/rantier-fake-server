@@ -56,12 +56,11 @@ export const createProperty = async (
       });
     }
 
-    console.log("test req", req?.user?.firebase?.identities.email?.[0]);
     const respData = await properyService.createPropertyAction({
       ...req?.body,
       userEmail: req?.user?.email || "",
     });
-    if (!!respData.success) {
+    if (!!respData?.success) {
       res.status(200).json({
         status: "success",
         //@ts-ignore
@@ -77,6 +76,42 @@ export const createProperty = async (
     res.status(500).json({
       status: "error",
       message: `Something went wrong with PropertyCreation ${e}`,
+    });
+  }
+};
+
+export const updatePropertyImage = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.email || "";
+    if (!userId) {
+      return res.status(401).json({
+        status: "error",
+        message: "No token provided",
+      });
+    }
+    if (!req.file) {
+      return res.status(400).json({
+        status: "error",
+        message: "No file uploaded",
+      });
+    }
+    const respData = await properyService.createPropertyAction({
+      ...req?.body,
+      userEmail: req?.user?.email || "",
+    });
+
+    const resultImage = await properyService.updatePropertyImage({
+      propertyId: respData?.data?.id,
+      imagePath: req.file.path,
+    });
+    return res.status(200).json({
+      status: "success",
+      message: "Property with image created",
+    });
+  } catch (e) {
+    res.status(500).json({
+      status: "error",
+      message: `Server error: ${e}`,
     });
   }
 };

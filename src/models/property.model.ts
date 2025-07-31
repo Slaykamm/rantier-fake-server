@@ -7,5 +7,5 @@ export interface IPropertyCreateDto
     Property,
     "id" | "userId" | "isRented" | "rent" | "user" | "counters"
   > {
-  counters: ICounterCreateDto[];
+  counters?: ICounterCreateDto[];
 }

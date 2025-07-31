@@ -108,7 +108,6 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
         message: "No token provided",
       });
     }
-    console.log("test111", req.body);
     if (!req.file) {
       return res.status(400).json({
         status: "error",

@@ -1,9 +1,9 @@
-import { IRent } from "./rent.model";
+import { Rent } from "../entity/rent.entity";
 
 export interface ITransactions {
   id: number;
   createAt: string;
-  rentId: IRent;
+  rentId: Rent;
   amount: number;
   kindOfPayment: string;
   type: string;
