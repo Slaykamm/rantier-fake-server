@@ -9,6 +9,9 @@ import { findRentByProperyIdAction } from "./rent.service";
 import { getUserByUserId } from "./user.service";
 import path from "path";
 import fs from "fs";
+import { ICounterCreateDto } from "../models/counter.model";
+import { getCounters } from "./counter.service";
+import { parseCounters } from "../utils/untils";
 
 const properyRepository = AppDataSource.getRepository(Property);
 
@@ -43,6 +46,7 @@ export const getPropertyById = async (id: number) => {
 
 interface ICreateActionPorps extends IPropertyCreateDto {
   userEmail?: string;
+  imagePath?: string;
 }
 
 export const createPropertyAction = async (
@@ -55,7 +59,8 @@ export const createPropertyAction = async (
     }
   | undefined
 > => {
-  const { userEmail, name, address, rooms, area, label, counters } = props;
+  const { userEmail, name, address, rooms, area, label, counters, imagePath } =
+    props;
 
   const userRepository = AppDataSource.getRepository(User);
   try {
@@ -66,6 +71,7 @@ export const createPropertyAction = async (
         message: "No user found!",
       };
     }
+
     let newProperty: Property | null;
     await AppDataSource.manager.transaction(
       async (transactionPropertyManager) => {
@@ -79,9 +85,11 @@ export const createPropertyAction = async (
           label,
           rooms,
           userId: presentUser.id,
+          image: imagePath,
         });
 
         await propertyRepository.save(newProperty);
+
         await AppDataSource.manager.transaction(
           async (transactionCountersManager) => {
             if (!newProperty) {
@@ -98,7 +106,7 @@ export const createPropertyAction = async (
               transactionCountersManager.getRepository(Indications);
 
             if (!!counters?.length) {
-              counters?.forEach(async (counter) => {
+              parseCounters(counters as any)?.forEach(async (counter) => {
                 const today = new Date();
                 today.setHours(0, 0, 0, 0); // Обнуляем часы, минуты, секунды, миллисекунды
                 const verificationDate = new Date(counter.verificationDate);

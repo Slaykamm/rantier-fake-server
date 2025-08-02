@@ -3,6 +3,7 @@ import { IResponseDto } from "../models/response.model";
 import * as properyService from "../services/property.service";
 import { Property } from "../entity/property.entity";
 import { IPropertyCreateDto } from "../models/property.model";
+import path from "path";
 
 export const getProperty = async (
   req: Request,
@@ -98,16 +99,54 @@ export const updatePropertyImage = async (req: Request, res: Response) => {
     const respData = await properyService.createPropertyAction({
       ...req?.body,
       userEmail: req?.user?.email || "",
+      imagePath: req.file.path,
     });
-
+    console.log("test respData", respData);
     const resultImage = await properyService.updatePropertyImage({
       propertyId: respData?.data?.id,
       imagePath: req.file.path,
     });
+
     return res.status(200).json({
       status: "success",
       message: "Property with image created",
     });
+  } catch (e) {
+    res.status(500).json({
+      status: "error",
+      message: `Server error: ${e}`,
+    });
+  }
+};
+
+export const getPropertyImage = async (
+  req: Request<{}, {}, { propertyId: number }>,
+  res: Response
+) => {
+  try {
+    const userId = req.user?.email || "";
+    if (!userId) {
+      return res.status(401).json({
+        status: "error",
+        message: "No token provided",
+      });
+    }
+
+    const propertyId = req.body?.propertyId;
+    const property = await properyService.getPropertyById(propertyId);
+    if (!propertyId) {
+      return res.status(404).json({
+        status: "error",
+        message: "Property not found",
+      });
+    }
+    if (!property?.[0]?.image) {
+      return res.status(404).json({
+        status: "success",
+        message: "No image found",
+      });
+    }
+    res.sendFile(path.resolve(property?.[0]?.image));
   } catch (e) {
     res.status(500).json({
       status: "error",

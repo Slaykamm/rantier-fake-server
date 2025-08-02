@@ -3,6 +3,7 @@
 // }
 
 import { Transactions } from "../entity/transactions.entity";
+import { ICounterCreateDto } from "../models/counter.model";
 
 function isNumber(value: number) {
   return typeof value === "number" && !isNaN(value) && isFinite(value);
@@ -27,3 +28,10 @@ export const getTgUsername = (tgUsername?: string) => {
   }
   return "@" + tgUsername;
 };
+
+export function parseCounters(countersData?: string): ICounterCreateDto[] {
+  if (!countersData) {
+    return [];
+  }
+  return JSON.parse(countersData) as unknown as ICounterCreateDto[];
+}
