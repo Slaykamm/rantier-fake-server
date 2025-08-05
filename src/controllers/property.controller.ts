@@ -101,7 +101,6 @@ export const updatePropertyImage = async (req: Request, res: Response) => {
       userEmail: req?.user?.email || "",
       imagePath: req.file.path,
     });
-    console.log("test respData", respData);
     const resultImage = await properyService.updatePropertyImage({
       propertyId: respData?.data?.id,
       imagePath: req.file.path,
@@ -152,5 +151,30 @@ export const getPropertyImage = async (
       status: "error",
       message: `Server error: ${e}`,
     });
+  }
+};
+
+export const deletePropertyById = async (
+  req: Request<{ id: number }>,
+  res: Response<IResponseDto<Property>>
+) => {
+  const id = req.params.id;
+  if (!id) {
+    res
+      .status(500)
+      .json({ status: "error", message: `Validation failed. Не передан id.` });
+  }
+  try {
+    const result = await properyService.deletePropertyById(id);
+    console.log("teeest333", result);
+    if (!!result?.success) {
+      res.status(200).json({ status: "success" });
+    } else {
+      res.status(500).json({ status: "error", message: result?.message });
+    }
+  } catch {
+    res
+      .status(500)
+      .json({ status: "error", message: `Данного ID: ${id} нет в БД` });
   }
 };

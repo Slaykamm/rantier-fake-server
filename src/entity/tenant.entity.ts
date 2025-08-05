@@ -51,7 +51,7 @@ export class Tenant {
   @Column("int")
   rentId!: number;
 
-  @ManyToOne(() => Rent, (rent) => rent.tenants)
+  @ManyToOne(() => Rent, (rent) => rent.tenants, { onDelete: "CASCADE" })
   @JoinColumn({ name: "rentId" }) // это необязательно, если имя колонки совпадает
   rent!: Rent;
 }

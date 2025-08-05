@@ -21,7 +21,9 @@ export class Indications {
   @Column("text")
   createAt!: string;
 
-  @ManyToOne(() => Counter, (counter) => counter.indications)
+  @ManyToOne(() => Counter, (counter) => counter.indications, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "counterId" }) // это необязательно, если имя колонки совпадает
   counters!: Counter;
 }

@@ -28,7 +28,7 @@ export class Transactions {
   @Column("text")
   type!: string;
 
-  @ManyToOne(() => Rent, (rent) => rent.transactions)
+  @ManyToOne(() => Rent, (rent) => rent.transactions, { onDelete: "CASCADE" })
   @JoinColumn({ name: "rentId" }) // это необязательно, если имя колонки совпадает
   rent!: Rent;
 }

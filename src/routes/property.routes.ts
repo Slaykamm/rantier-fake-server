@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createProperty,
+  deletePropertyById,
   getProperty,
   getPropertyById,
   getPropertyImage,
@@ -26,5 +27,7 @@ propertyRouter.post(
   // @ts-ignore
   updatePropertyImage
 );
+// @ts-ignore
+propertyRouter.delete("/:id", authenticate, deletePropertyById);
 
 export default propertyRouter;

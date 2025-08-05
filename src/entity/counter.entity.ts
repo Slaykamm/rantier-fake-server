@@ -33,7 +33,9 @@ export class Counter {
   @Column("boolean")
   isActive!: boolean;
 
-  @ManyToOne(() => Property, (property) => property.counters)
+  @ManyToOne(() => Property, (property) => property.counters, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "propertyId" })
   property!: Property;
 

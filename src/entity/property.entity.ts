@@ -45,7 +45,7 @@ export class Property {
   @OneToMany(() => Rent, (rent) => rent.property)
   rent!: Rent[];
 
-  @ManyToOne(() => User, (user) => user.property)
+  @ManyToOne(() => User, (user) => user.property, { onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
   user!: User;
 }

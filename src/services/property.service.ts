@@ -9,9 +9,10 @@ import { findRentByProperyIdAction } from "./rent.service";
 import { getUserByUserId } from "./user.service";
 import path from "path";
 import fs from "fs";
-import { ICounterCreateDto } from "../models/counter.model";
-import { getCounters } from "./counter.service";
 import { parseCounters } from "../utils/untils";
+import { Rent } from "../entity/rent.entity";
+import { Tenant } from "../entity/tenant.entity";
+import { Transactions } from "../entity/transactions.entity";
 
 const properyRepository = AppDataSource.getRepository(Property);
 
@@ -42,6 +43,106 @@ export const getPropertyById = async (id: number) => {
   return await properyRepository.find({
     where: { id },
   });
+};
+
+// Возвращает массив запросов, которые должны все выполнится иначе будет ошибка.
+async function asyncMapParallel<T, U>(
+  array: T[],
+  callback: (item: T, index: number, array: T[]) => Promise<U>
+): Promise<U[]> {
+  const promises = array.map((item, index) => callback(item, index, array));
+  return Promise.all(promises);
+}
+
+export const deletePropertyById = async (
+  id: number
+): Promise<{ success: boolean; message?: string } | undefined> => {
+  try {
+    await AppDataSource.manager.transaction(async (transManager) => {
+      // если аренда активна - ничего не делаем. возвращаем ошибку
+      const result = await findRentByProperyIdAction(id);
+      if (!!result.data) {
+        throw Error("Аренда активна. Необходимо завершить ее до удаления ОН.");
+      }
+
+      const counterManager = transManager.getRepository(Counter);
+      const indicationsManager = transManager.getRepository(Indications);
+
+      // находим счетчики. и по каждому счетчику сначала удаляем показания. потом и их.
+      const propertyCounters = await counterManager.find({
+        where: { propertyId: id },
+      });
+      const counterIds = propertyCounters?.map((counter) => counter.id);
+      if (counterIds?.length) {
+        asyncMapParallel(counterIds, async (num) => {
+          const indicationsByCounterId = await indicationsManager.find({
+            where: { counterId: num },
+          });
+          const indicationIds = indicationsByCounterId?.map(
+            (indication) => indication.id
+          );
+          if (!!indicationIds?.length) {
+            await indicationsManager
+              .createQueryBuilder()
+              .delete()
+              .where("id IN (:...indicationIds)", { indicationIds })
+              .execute();
+          }
+          await counterManager.delete({ id: num });
+        });
+      }
+      // тоже самое аренда => арендодатель
+      const rentManager = transManager.getRepository(Rent);
+      const tenantManager = transManager.getRepository(Tenant);
+      const transactionManager = transManager.getRepository(Transactions);
+
+      const propertyRents = await rentManager.find({
+        where: { propertyId: id },
+      });
+
+      const rentIds = propertyRents?.map((rent) => rent.id);
+
+      if (rentIds?.length) {
+        asyncMapParallel(rentIds, async (rentId) => {
+          const tenantsByRentId = await tenantManager.find({
+            where: { rentId },
+          });
+          const tenantIds = tenantsByRentId?.map((tenant) => tenant.id);
+          if (!!tenantIds?.length) {
+            await tenantManager
+              .createQueryBuilder()
+              .delete()
+              .where("id IN (:...tenantIds)", { tenantIds })
+              .execute();
+          }
+
+          const transactionByRentId = await transactionManager.find({
+            where: { rentId },
+          });
+
+          const transactionIds = transactionByRentId?.map(
+            (transaction) => transaction.id
+          );
+          if (!!transactionIds?.length) {
+            await transactionManager
+              .createQueryBuilder()
+              .delete()
+              .where("id IN (:...transactionIds)", { transactionIds })
+              .execute();
+          }
+
+          await rentManager.delete({ id: rentId });
+        });
+      }
+      const propertyManager = transManager.getRepository(Property);
+      await propertyManager.delete({ id });
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      return { success: false, message: e.message };
+    }
+    return { success: false, message: "Unknown error occurred" };
+  }
 };
 
 interface ICreateActionPorps extends IPropertyCreateDto {
@@ -139,7 +240,6 @@ export const createPropertyAction = async (
                 });
                 await indicationsRepository.save(newIndication);
               });
-              console.log("here22", counters);
             }
           }
         );

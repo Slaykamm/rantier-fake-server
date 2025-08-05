@@ -48,7 +48,9 @@ export class Rent {
   @OneToMany(() => Tenant, (tenant) => tenant.rentId)
   tenants!: Tenant[];
 
-  @ManyToOne(() => Property, (property) => property.rent)
+  @ManyToOne(() => Property, (property) => property.rent, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "propertyId" }) // это необязательно, если имя колонки совпадает
   property!: Property;
 }
