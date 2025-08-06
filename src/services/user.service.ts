@@ -72,9 +72,6 @@ export const updateUserDataAction = async (props: IUpdateUserDto) => {
 
         const dataToSave = { ...oldUserData, ...updateData };
 
-        console.log("test props1", updateData);
-        console.log("test props2", oldUserData);
-        console.log("test props3", dataToSave);
         await usersRepository.save(dataToSave);
 
         return { success: true };

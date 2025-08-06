@@ -10,7 +10,7 @@ export const getProperty = async (
   res: Response<IResponseDto<Property>>
 ) => {
   try {
-    console.log("test req", req?.user?.firebase?.identities.email?.[0]);
+    // console.log("test req", req?.user?.firebase?.identities.email?.[0]);
     const properties = await properyService.getPropertiesByUserId(
       req?.user?.email || ""
     );
@@ -166,7 +166,6 @@ export const deletePropertyById = async (
   }
   try {
     const result = await properyService.deletePropertyById(id);
-    console.log("teeest333", result);
     if (!!result?.success) {
       res.status(200).json({ status: "success" });
     } else {
