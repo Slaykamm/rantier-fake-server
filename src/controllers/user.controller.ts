@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IResponseDto } from "../models/response.model";
-import { ITransactionsResponseDto } from "../models/transactions.model";
+import { ITransactionsBalanceResponseDto } from "../models/transactions.model";
 import * as userService from "../services/user.service";
 import { IUpdateUserDto } from "../models/user.model";
 import { User } from "../entity/user.entity";

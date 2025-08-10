@@ -4,7 +4,7 @@ import indicationsRouter from "./routes/indications.routes";
 import propertyRouter from "./routes/property.routes";
 import rentRouter from "./routes/rent.routes";
 import tenantRouter from "./routes/tenant.routes";
-import treansactionRouter from "./routes/transactions.routes";
+import transactionRouter from "./routes/transactions.routes";
 import admin from "firebase-admin";
 import express, { Request, Response, NextFunction, Router } from "express";
 import userRouter from "./routes/user.routes";
@@ -105,7 +105,7 @@ AppDataSource.initialize()
     app.use("/tenant", tenantRouter);
 
     // TRANSACTIONS
-    app.use("/transactions", treansactionRouter);
+    app.use("/transactions", transactionRouter);
 
     // Запуск сервера
     app.listen(port, () => {

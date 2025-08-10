@@ -1,13 +1,24 @@
 import { Router } from "express";
 import {
+  createTransactionsByRentId,
+  deleteTransactionById,
   getTransactions,
   getTransactionsByRentId,
+  getTransactionsHistoryByRentId,
 } from "../controllers/transactions.controller";
 import { authenticate } from "../auth/auth";
 
-const treansactionRouter = Router();
+const transactionRouter = Router();
 
-treansactionRouter.get("/", authenticate, getTransactions);
-treansactionRouter.post("/", authenticate, getTransactionsByRentId);
+transactionRouter.get("/", authenticate, getTransactions);
+transactionRouter.post("/", authenticate, getTransactionsByRentId);
+transactionRouter.post(
+  "/history",
+  authenticate,
+  getTransactionsHistoryByRentId
+);
+// @ts-ignore
+transactionRouter.delete("/:id", authenticate, deleteTransactionById);
+transactionRouter.post("/create", authenticate, createTransactionsByRentId);
 
-export default treansactionRouter;
+export default transactionRouter;

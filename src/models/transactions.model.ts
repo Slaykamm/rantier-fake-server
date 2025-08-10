@@ -9,8 +9,15 @@ export interface ITransactions {
   type: string;
 }
 
-export interface ITransactionsResponseDto {
+export interface ITransactionsBalanceResponseDto {
   mainTotal: number;
   serviceTotal: number;
   total: number;
+}
+
+export interface ITransactionCreateDto {
+  rentId: number;
+  amount: number;
+  kindOfPayment: string;
+  type: string;
 }

@@ -1,6 +1,9 @@
 import { AppDataSource } from "../database/data-source";
 import { Transactions } from "../entity/transactions.entity";
-import { ITransactionsResponseDto } from "../models/transactions.model";
+import {
+  ITransactions,
+  ITransactionsBalanceResponseDto,
+} from "../models/transactions.model";
 import { getSumFromTransaction } from "../utils/untils";
 
 const transactionRepository = AppDataSource.getRepository(Transactions);
@@ -14,7 +17,7 @@ export const getTransactions = async () => {
 
 export const getTransactionsByRentId = async (
   rentId: number
-): Promise<ITransactionsResponseDto> => {
+): Promise<ITransactionsBalanceResponseDto> => {
   const filteredByRentId = await transactionRepository.find({
     where: { rentId },
     relations: ["rent"],
@@ -47,4 +50,28 @@ export const getTransactionsByRentId = async (
   const total = mainTotal + serviceTotal;
 
   return { mainTotal, serviceTotal, total };
+};
+
+export const getTransactionsHistoryByRentId = async (
+  rentId: number
+): Promise<Transactions[]> => {
+  const filteredByRentId = await transactionRepository.find({
+    where: { rentId },
+  });
+  return (filteredByRentId || []).sort(
+    (a, b) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime()
+  );
+};
+
+export const deleteTransactionById = async (id: number) => {
+  try {
+    const transaction = await transactionRepository.delete({ id });
+    if (!transaction) {
+      return { success: false };
+    }
+
+    return { success: true };
+  } catch (e) {
+    if (e instanceof Error) return { success: false, message: e.message };
+  }
 };
