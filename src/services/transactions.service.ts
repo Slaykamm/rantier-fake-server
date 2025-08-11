@@ -1,6 +1,7 @@
 import { AppDataSource } from "../database/data-source";
 import { Transactions } from "../entity/transactions.entity";
 import {
+  ITransactionCreateDto,
   ITransactions,
   ITransactionsBalanceResponseDto,
 } from "../models/transactions.model";
@@ -71,6 +72,31 @@ export const deleteTransactionById = async (id: number) => {
     }
 
     return { success: true };
+  } catch (e) {
+    if (e instanceof Error) return { success: false, message: e.message };
+  }
+};
+
+export const createTransactionsByRentId = async (
+  req: ITransactionCreateDto
+) => {
+  const { amount, rentId, kindOfPayment, type } = req;
+  if (!amount || !rentId || !kindOfPayment || !type) {
+    return { success: false };
+  }
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Обнуляем часы, минуты, секунды, миллисекунды
+
+    const newTransaction = transactionRepository.create({
+      createAt: today.toISOString().split("T")[0],
+      rentId,
+      amount,
+      kindOfPayment,
+      type,
+    });
+    await transactionRepository.save(newTransaction);
+    return { success: true, data: [newTransaction] };
   } catch (e) {
     if (e instanceof Error) return { success: false, message: e.message };
   }

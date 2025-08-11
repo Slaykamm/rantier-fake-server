@@ -87,14 +87,22 @@ export const createTransactionsByRentId = async (
   req: Request<{}, {}, ITransactionCreateDto>,
   res: Response<IResponseDto<Transactions>>
 ) => {
-  console.log("teeeeest", req.body);
   try {
-    const respData = await transactionService.getTransactions();
+    const respData = await transactionService.createTransactionsByRentId(
+      req.body
+    );
 
-    res.status(200).json({
-      status: "success",
-      data: respData,
-    });
+    if (respData?.success) {
+      res.status(200).json({
+        status: "success",
+        data: respData.data,
+      });
+    } else {
+      res.status(500).json({
+        status: "error",
+        message: "Transaction was not created. Validation Error",
+      });
+    }
   } catch (e) {
     res.status(500).json({
       status: "error",
