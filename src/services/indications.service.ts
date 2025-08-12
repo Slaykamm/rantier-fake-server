@@ -1,5 +1,6 @@
 import { AppDataSource } from "../database/data-source";
 import { Indications } from "../entity/indications.entity";
+import { IndicationCreateDto } from "../models/indications.model";
 
 const indicationsRepository = AppDataSource.getRepository(Indications);
 
@@ -28,7 +29,6 @@ export const postIndicationsByCounterId = async (counterId: number) => {
       // @ts-ignore
       (a, b) => new Date(b.createAt) - new Date(a.createAt)
     );
-
     const twoLatestIndications = [
       orderedFilteredIndications?.[0],
       orderedFilteredIndications?.[1],
@@ -39,5 +39,22 @@ export const postIndicationsByCounterId = async (counterId: number) => {
     );
 
     return filteredTwoLatestIndications;
+  }
+};
+
+export const createIndication = async (request: IndicationCreateDto) => {
+  try {
+    const today = new Date();
+    // today.setHours(0, 0, 0, 0); // Обнуляем часы, минуты, секунды, миллисекунды
+
+    const newIndication = indicationsRepository.create({
+      createAt: today.toISOString(), //.split("T")[0],
+      counterId: request.id,
+      value: request.value,
+    });
+    await indicationsRepository.save(newIndication);
+    return { success: true, data: [newIndication] };
+  } catch (e) {
+    if (e instanceof Error) return { success: false, message: e.message };
   }
 };

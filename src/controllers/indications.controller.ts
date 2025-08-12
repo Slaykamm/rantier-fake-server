@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { IResponseDto } from "../models/response.model";
 import * as indicationsService from "../services/indications.service";
 import { Indications } from "../entity/indications.entity";
+import { IndicationCreateDto } from "../models/indications.model";
 
 export const getIndications = async (req: Request, res: Response) => {
   const indications = await indicationsService.getIndications();
@@ -42,6 +43,34 @@ export const postIndicationsByCounterId = async (
         status: "success",
         data: [],
         message: "No any indications for this counterId",
+      });
+    }
+  } catch (e) {
+    // @ts-ignore
+    res.status(500).json({
+      status: "error",
+      message: String(e),
+    });
+  }
+};
+
+export const createIndication = async (
+  req: Request<{}, {}, IndicationCreateDto>,
+  res: Response<IResponseDto<Indications>>
+) => {
+  if (!req.body.id || !req.body.value) {
+    res.status(500).json({
+      status: "error",
+      message: "Validation Error",
+    });
+  }
+
+  try {
+    const result = await indicationsService.createIndication(req.body);
+    if (result?.success) {
+      res.status(200).json({
+        status: "success",
+        data: result.data,
       });
     }
   } catch (e) {

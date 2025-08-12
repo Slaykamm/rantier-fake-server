@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  createIndication,
   getIndications,
   getIndicationsById,
   postIndicationsByCounterId,
@@ -14,5 +15,6 @@ indicationsRouter.get("/", authenticate, getIndications);
 indicationsRouter.get("/:id", authenticate, getIndicationsById);
 
 indicationsRouter.post("/", authenticate, postIndicationsByCounterId);
+indicationsRouter.post("/create", authenticate, createIndication);
 
 export default indicationsRouter;
