@@ -11,6 +11,7 @@ import userRouter from "./routes/user.routes";
 import multer from "multer";
 import cors from "cors";
 import path from "path";
+import settingsRouter from "./routes/settings.routes";
 const serviceAccount = require("../firebase-adminsdk.json");
 
 // Type declarations
@@ -106,6 +107,9 @@ AppDataSource.initialize()
 
     // TRANSACTIONS
     app.use("/transactions", transactionRouter);
+
+    // SETTINGS
+    app.use("/settings", settingsRouter);
 
     // Запуск сервера
     app.listen(port, () => {

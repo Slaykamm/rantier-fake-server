@@ -8,6 +8,7 @@ import { Tenant } from "../entity/tenant.entity";
 import { Transactions } from "../entity/transactions.entity";
 import { CounterType } from "../entity/counterType.entity";
 import { User } from "../entity/user.entity";
+import { Settings } from "../entity/settings.entity";
 
 export const AppDataSource = new DataSource({
   type: "sqlite",
@@ -23,6 +24,7 @@ export const AppDataSource = new DataSource({
     Transactions,
     CounterType,
     User,
+    Settings,
   ],
   migrations: [],
   subscribers: [],

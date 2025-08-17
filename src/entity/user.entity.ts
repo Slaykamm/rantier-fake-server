@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Counter } from "./counter.entity";
 import { Property } from "./property.entity";
+import { Settings } from "./settings.entity";
 
 @Entity()
 export class User {
@@ -30,5 +31,9 @@ export class User {
 
   @OneToMany(() => Property, (property) => property.userId) // указывает на поле к которому коннектим там
   property!: Property[]; //указываем на обратную сущность.  куда пихаем все найденные связи.
+  // /потом массив.
+
+  @OneToMany(() => Settings, (settings) => settings.userId) // указывает на поле к которому коннектим там
+  settings!: Settings[]; //указываем на обратную сущность.  куда пихаем все найденные связи.
   // /потом массив.
 }
