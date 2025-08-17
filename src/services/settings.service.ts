@@ -25,7 +25,6 @@ interface ISetSettings {
 
 export const setSettings = async (props: ISetSettings) => {
   const { req, userId } = props;
-  console.log("test req", req);
   const {
     auto_invoicing,
     counter_reminder,
