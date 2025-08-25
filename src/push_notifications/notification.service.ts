@@ -8,7 +8,7 @@ type NotificationPayload = {
 
 type MessageData = Record<string, string>;
 
-export class NotificationService {
+export class PushNotificationService {
   /**
    * Отправка уведомления на одно устройство
    */

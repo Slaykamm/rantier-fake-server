@@ -21,7 +21,7 @@ export class Property {
   @Column("text")
   address!: string;
 
-  @Column("text")
+  @Column("int")
   userId!: number;
 
   @Column({ type: "text", nullable: true })
@@ -45,7 +45,7 @@ export class Property {
   @OneToMany(() => Rent, (rent) => rent.property)
   rent!: Rent[];
 
-  @ManyToOne(() => User, (user) => user.property, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.properties, { onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
   user!: User;
 }

@@ -1,54 +1,127 @@
 import cron from "node-cron";
-import { AppDataSource } from "../database/data-source";
-import { Settings } from "../entity/settings.entity";
-import { NotificationService } from "../push_notifications/notification.service";
+import { expiredContracts, invoicingContacts } from "../services/rent.service";
+import { ESchedulerType } from "../consts/scheduler_enum";
+import * as NotificationService from "../services/notifications.service";
+import { getActualNotifications } from "../services/notifications.service";
+import { PushNotificationService } from "../push_notifications/notification.service";
+
+// Делаем уникальный идентификатор состоящий из: ТипШедулера_ID строчки инициатора пуша_DeviceId куда слать пуш
 
 export const startCronJobs = () => {
-  // Проверка каждые 10 минут (можно изменить в .env)
-  //   cron.schedule(process.env.CRON_SCHEDULE || "*/10 * * * *", async () => {
-  cron.schedule("0,10,20,30,40,50 * * * * *", async () => {
-    console.log("Запуск cron-задачи: проверка записей...");
-
-    try {
-      // Отправка на одно устройство
-      // const singleResult = await NotificationService.sendToDevice(
-      //   // "device_token_here",
-      //   "e8GF9BTCRXyhvZNYrhGegI:APA91bFi0xThCHnyLtBIZf2TtcX5wfgMBDdDbtRHfTZlraQoCIwsFbmNBzBNyKb2eDvdQaz5PQtCT46gey5haD-a76ORcXWxuAaRr41qFDp1KGP94Nq1I1s",
-      //   // "fnutpZN4TNeP_wcE3rM3Jg:APA91bGnm68ZuZAVTZY7PdtsuSDYDEAZ2zsRH-gFeA97DArGl5pemUz6GdqseZ52U3Z7CrcNA0OEdRVpWDfq49Nx63QoW3iKU_sRCPQbQeJwdxWk04tX6yU",
-      //   {
-      //     title: "Привет!",
-      //     body: "Это тестовое уведомление",
-      //   },
-      //   {
-      //     key: "value",
-      //   }
-      // );
-      console.log("Single message sent:"); //singleResult
-    } catch (e) {
-      if (e instanceof Error) console.log("ERRRROR", e.message);
+  cron.schedule(
+    process.env.SCHEDULE_PAYMENT_REMIDER || "0 12 * * *",
+    async () => {
+      console.log(
+        "Запуск cron-задачи: проверка истекающих через 5 дней контрактов..."
+      );
+      // Проверка на итекающие контракты
+      try {
+        const checkEndContractDate = await expiredContracts();
+        if (checkEndContractDate?.length) {
+          checkEndContractDate.forEach((contract) => {
+            if (contract.property?.user?.devices?.length) {
+              contract.property?.user?.devices.forEach(async (device) => {
+                await NotificationService.createNotification({
+                  body: `Истекает контракт №${contract.contract} по аренде недвижимости ${contract.property.name}`,
+                  key: `${ESchedulerType.expiredContracts}_${contract.id}_${device.deviceId}`,
+                  userId: contract.property.user.id,
+                  isError: false,
+                  title: "Контракт аренды истекает",
+                  token: device.token || "",
+                });
+              });
+            }
+          });
+        }
+      } catch (e) {
+        if (e instanceof Error)
+          console.log("Ошибка провери истекающих договор аренды", e.message);
+      }
     }
+  );
 
-    // const recordRepository = AppDataSource.getRepository(Settings);
-    // const settings = await recordRepository.find();
+  // Проверка на то что пора выставлять счета и присылать счетчики контракты
+  cron.schedule(
+    process.env.SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
+    async () => {
+      console.log(
+        "Запуск cron-задачи: проверка времени подачи данных о счетчиков и выставлять счета..."
+      );
+      // Проверка на итекающие контракты
+      try {
+        const getNeedToInvoicedContracts = await invoicingContacts();
+        if (getNeedToInvoicedContracts?.length) {
+          getNeedToInvoicedContracts.forEach((contract) => {
+            if (contract.property?.user?.devices?.length) {
+              contract.property?.user?.devices.forEach(async (device) => {
+                if (!!device.token) {
+                  await NotificationService.createNotification({
+                    body: `По контракту №${contract.contract} по аренде недвижимости ${contract.property.name} пора запросить счетчики для выставления счетов`,
+                    isError: false,
+                    key: `${ESchedulerType.invoicingTrigger}_${contract.id}_${device.deviceId}`,
+                    userId: contract.property.user.id,
+                    title: "Запросить счетчики",
+                    token: device.token || "",
+                  });
+                }
+              });
+            }
+          });
+        }
+      } catch (e) {
+        if (e instanceof Error)
+          console.log(
+            "Ошибка времени подачи данных о счетчиков и выставлять счета",
+            e.message
+          );
+      }
+    }
+  );
 
-    // console.log("CRON", settings);
+  //  шедулер для отправки пушей из БД нотификейшнс
+  cron.schedule(
+    process.env.SCHEDULE_NOTIFICATION_SERVICE || "1 * * * *",
+    async () => {
+      console.log("Запуск cron-задачи: отправка пуш уведомлений");
+      try {
+        const actualNotifications = await getActualNotifications();
+        console.log("test actualNotifications", actualNotifications);
+        if (actualNotifications?.length) {
+          actualNotifications.forEach(
+            async ({ id, body, token, key, title }) => {
+              try {
+                await PushNotificationService.sendToDevice(
+                  token || "",
+                  {
+                    title: title || "",
+                    body: body || "",
+                  },
+                  {
+                    key: key || "",
+                  }
+                );
 
-    // for (const record of records) {
-    //     try {
-    //         await sendEmail({
-    //             to: record.email,
-    //             subject: 'Уведомление',
-    //             text: `Привет, ${record.name}! Твой статус требует внимания.`,
-    //         });
+                await NotificationService.setSuccessExecutedFlag(id);
+              } catch (e) {
+                if (e instanceof Error) {
+                  console.log(
+                    `Ошибка в отправке пуш уведомления на пуше ${id}`,
+                    e.message
+                  );
+                  await NotificationService.setErrorExecutedFlag(id);
+                }
+              }
+            }
+          );
+        }
+      } catch (e) {
+        if (e instanceof Error)
+          console.log(`Ошибка в сервисе отправки пуш уведомлений`, e.message);
+      }
 
-    //         // Помечаем запись как обработанную
-    //         record.notified = true;
-    //         await recordRepository.save(record);
-
-    //         console.log(`Email отправлен: ${record.email}`);
-    //     } catch (err) {
-    //         console.error(`Ошибка при отправке email для ${record.email}:`, err);
-    //     }
-    // }
-  });
+      // TODO
+      // написать шедулер добавления в БД на отправку через емаил
+      // написать шедулер добавления в БД на отправку через телеграмм
+    }
+  );
 };

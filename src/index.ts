@@ -10,6 +10,7 @@ import express, { Request, Response } from "express";
 import userRouter from "./routes/user.routes";
 import cors from "cors";
 import path from "path";
+import "dotenv/config";
 import settingsRouter from "./routes/settings.routes";
 import { startCronJobs } from "./scheduler/cron.service";
 import userDevicesRouter from "./routes/userdevices.routes";

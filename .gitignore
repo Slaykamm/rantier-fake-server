@@ -1,5 +1,5 @@
 node_modules
 firebase-adminsdk.json
-.env
+# .env
 /src/uploads/
 /dist/

@@ -16,7 +16,7 @@ export class UserDevices {
   @Column("text")
   createAt!: string;
 
-  @Column("text")
+  @Column("int")
   userId!: number;
 
   @Column("text", { nullable: true })

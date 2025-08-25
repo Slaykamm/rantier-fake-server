@@ -13,7 +13,7 @@ export class Settings {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column("text")
+  @Column("int")
   userId!: number;
 
   // сервис  емаил для общения с клиентом
