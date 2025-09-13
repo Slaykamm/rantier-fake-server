@@ -10,7 +10,7 @@ interface INotificationsCreate
   extends Omit<Notifications, "id" | "createAt" | "isExecuted" | "user"> {}
 
 export const createNotification = async (request: INotificationsCreate) => {
-  const { body, key, title, token } = request;
+  const { body, key, title, token, propertyId } = request;
 
   const presentNofitication = await notificationsRepository.find({
     where: {
@@ -29,6 +29,7 @@ export const createNotification = async (request: INotificationsCreate) => {
     body,
     key,
     title,
+    propertyId,
     token,
     isExecuted: false,
     createAt: today.toString(),

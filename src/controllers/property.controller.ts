@@ -30,8 +30,8 @@ export const getPropertyById = async (
   const id = req.params.id;
   try {
     const property = await properyService.getPropertyById(id);
-    if (!!property?.length) {
-      res.status(200).json({ status: "success", data: property });
+    if (!!property?.success) {
+      res.status(200).json({ status: "success", data: [property.data] });
     } else {
       res
         .status(500)
@@ -139,13 +139,13 @@ export const getPropertyImage = async (
         message: "Property not found",
       });
     }
-    if (!property?.[0]?.image) {
+    if (!property?.data?.image) {
       return res.status(404).json({
         status: "success",
         message: "No image found",
       });
     }
-    res.sendFile(path.resolve(property?.[0]?.image));
+    res.sendFile(path.resolve(property?.data?.image));
   } catch (e) {
     res.status(500).json({
       status: "error",

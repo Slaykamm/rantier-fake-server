@@ -1,5 +1,6 @@
 import { AppDataSource } from "../database/data-source";
 import { UserDevices } from "../entity/userDevices.entity";
+import { logger } from "../logger/logger";
 import { IUserDeviceUpdateDto } from "../models/userDevices.model";
 import { getUserByUserId } from "./user.service";
 
@@ -33,6 +34,15 @@ export const updateUserDevice = async (props: ISetSettings) => {
         tokenUpdatedAt,
       });
       await userDevicesRepository.save(newIndication);
+      logger.info("[USER_DEVICES] create", {
+        category: "user_devices",
+        action: "create",
+        userId: user.id,
+        deviceId,
+        platform,
+        appVersion,
+        tokenUpdatedAt,
+      });
       return {
         success: true,
         data: [newIndication],
@@ -47,6 +57,15 @@ export const updateUserDevice = async (props: ISetSettings) => {
     foundDevice.tokenUpdatedAt = tokenUpdatedAt || foundDevice?.tokenUpdatedAt;
 
     await userDevicesRepository.save(foundDevice);
+    logger.info("[USER_DEVICES] update", {
+      category: "user_devices",
+      action: "update",
+      userId: user.id,
+      deviceId: foundDevice.deviceId,
+      platform: foundDevice.platform,
+      appVersion: foundDevice.appVersion,
+      tokenUpdatedAt: foundDevice.tokenUpdatedAt,
+    });
 
     return {
       success: true,

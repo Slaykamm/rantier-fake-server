@@ -11,6 +11,7 @@ import { User } from "../entity/user.entity";
 import { Settings } from "../entity/settings.entity";
 import { UserDevices } from "../entity/userDevices.entity";
 import { Notifications } from "../entity/notifications.entity";
+import { DBLogger } from "../logger/dbLogger";
 
 export const AppDataSource = new DataSource({
   type: "sqlite",

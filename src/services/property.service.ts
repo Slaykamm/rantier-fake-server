@@ -40,9 +40,17 @@ export const getPropertiesByUserId = async (userId: string) => {
 };
 
 export const getPropertyById = async (id: number) => {
-  return await properyRepository.find({
+  const property = await properyRepository.findOne({
     where: { id },
   });
+  const activeRent = await findRentByProperyIdAction(id);
+
+  if (!property) {
+    return { sucess: false, message: "Не найдено Объекта недвижимости" };
+  }
+  property.isRented = !!activeRent.data?.isActiveRent;
+
+  return { success: true, data: property };
 };
 
 // Возвращает массив запросов, которые должны все выполнится иначе будет ошибка.

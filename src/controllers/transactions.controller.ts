@@ -6,7 +6,6 @@ import {
   ITransactionsBalanceResponseDto,
 } from "../models/transactions.model";
 import * as transactionService from "../services/transactions.service";
-import { Transaction } from "typeorm";
 import { Transactions } from "../entity/transactions.entity";
 
 export const getTransactions = async (req: Request, res: Response) => {

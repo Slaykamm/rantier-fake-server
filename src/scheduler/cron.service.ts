@@ -1,19 +1,26 @@
 import cron from "node-cron";
-import { expiredContracts, invoicingContacts } from "../services/rent.service";
+import {
+  expiredContracts,
+  getActiveRents,
+  invoicingContacts,
+} from "../services/rent.service";
 import { ESchedulerType } from "../consts/scheduler_enum";
 import * as NotificationService from "../services/notifications.service";
 import { getActualNotifications } from "../services/notifications.service";
 import { PushNotificationService } from "../push_notifications/notification.service";
+import { SchedulerLogger } from "../logger/schedulerLogger";
 
 // Делаем уникальный идентификатор состоящий из: ТипШедулера_ID строчки инициатора пуша_DeviceId куда слать пуш
 
 export const startCronJobs = () => {
   cron.schedule(
-    process.env.SCHEDULE_PAYMENT_REMIDER || "0 12 * * *",
+    // process.env.SCHEDULE_PAYMENT_REMIDER || "0 12 * * *",
+    process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "0 12 * * *",
     async () => {
-      console.log(
-        "Запуск cron-задачи: проверка истекающих через 5 дней контрактов..."
-      );
+      SchedulerLogger.jobStart("[SCHEDULER] start", {
+        jobName: ESchedulerType.expiredContracts,
+        cron: process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "0 12 * * *",
+      });
       // Проверка на итекающие контракты
       try {
         const checkEndContractDate = await expiredContracts();
@@ -25,6 +32,7 @@ export const startCronJobs = () => {
                   body: `Истекает контракт №${contract.contract} по аренде недвижимости ${contract.property.name}`,
                   key: `${ESchedulerType.expiredContracts}_${contract.id}_${device.deviceId}`,
                   userId: contract.property.user.id,
+                  propertyId: contract.propertyId,
                   isError: false,
                   title: "Контракт аренды истекает",
                   token: device.token || "",
@@ -35,18 +43,23 @@ export const startCronJobs = () => {
         }
       } catch (e) {
         if (e instanceof Error)
-          console.log("Ошибка провери истекающих договор аренды", e.message);
+          SchedulerLogger.jobError("[SCHEDULER] error", e, {
+            jobName: ESchedulerType.expiredContracts,
+            scope: "expiredContracts",
+          });
       }
     }
   );
 
   // Проверка на то что пора выставлять счета и присылать счетчики контракты
   cron.schedule(
-    process.env.SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
+    // process.env.SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
+    process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
     async () => {
-      console.log(
-        "Запуск cron-задачи: проверка времени подачи данных о счетчиков и выставлять счета..."
-      );
+      SchedulerLogger.jobStart("[SCHEDULER] start", {
+        jobName: ESchedulerType.invoicingTrigger,
+        cron: process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
+      });
       // Проверка на итекающие контракты
       try {
         const getNeedToInvoicedContracts = await invoicingContacts();
@@ -70,25 +83,28 @@ export const startCronJobs = () => {
         }
       } catch (e) {
         if (e instanceof Error)
-          console.log(
-            "Ошибка времени подачи данных о счетчиков и выставлять счета",
-            e.message
-          );
+          SchedulerLogger.jobError("[SCHEDULER] error", e, {
+            jobName: ESchedulerType.invoicingTrigger,
+            scope: "invoicingTrigger",
+          });
       }
     }
   );
 
   //  шедулер для отправки пушей из БД нотификейшнс
   cron.schedule(
-    process.env.SCHEDULE_NOTIFICATION_SERVICE || "1 * * * *",
+    process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "1 * * * *",
+    // process.env.SCHEDULE_NOTIFICATION_SERVICE || "1 * * * *",
     async () => {
-      console.log("Запуск cron-задачи: отправка пуш уведомлений");
+      SchedulerLogger.jobStart("[SCHEDULER] start", {
+        jobName: "push_notifications_sender",
+        cron: process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "1 * * * *",
+      });
       try {
         const actualNotifications = await getActualNotifications();
-        console.log("test actualNotifications", actualNotifications);
         if (actualNotifications?.length) {
           actualNotifications.forEach(
-            async ({ id, body, token, key, title }) => {
+            async ({ id, body, token, key, title, propertyId }) => {
               try {
                 await PushNotificationService.sendToDevice(
                   token || "",
@@ -98,16 +114,19 @@ export const startCronJobs = () => {
                   },
                   {
                     key: key || "",
+                    notificationId: String(id),
+                    propertyId: String(propertyId),
                   }
                 );
 
                 await NotificationService.setSuccessExecutedFlag(id);
               } catch (e) {
                 if (e instanceof Error) {
-                  console.log(
-                    `Ошибка в отправке пуш уведомления на пуше ${id}`,
-                    e.message
-                  );
+                  SchedulerLogger.jobError("[SCHEDULER] error", e, {
+                    jobName: "push_notifications_sender",
+                    id,
+                    scope: "push_send",
+                  });
                   await NotificationService.setErrorExecutedFlag(id);
                 }
               }
@@ -116,12 +135,38 @@ export const startCronJobs = () => {
         }
       } catch (e) {
         if (e instanceof Error)
-          console.log(`Ошибка в сервисе отправки пуш уведомлений`, e.message);
+          SchedulerLogger.jobError("[SCHEDULER] error", e, {
+            jobName: "push_notifications_sender",
+            scope: "push_service",
+          });
       }
 
       // TODO
       // написать шедулер добавления в БД на отправку через емаил
       // написать шедулер добавления в БД на отправку через телеграмм
+    }
+  );
+
+  // Шедулер для закрытие контрактов аренды с закончившейся датой.
+
+  cron.schedule(
+    process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "16 0 * * *",
+    // process.env.SCHEDULE_DEACTIVATE_CONTRACT || "16 0 * * *",
+    async () => {
+      SchedulerLogger.jobStart("[SCHEDULER] start", {
+        jobName: "deactivate_expired_contracts",
+        cron: process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "16 0 * * *",
+      });
+      // Проверка на истекашие контракты
+      try {
+        await getActiveRents();
+      } catch (e) {
+        if (e instanceof Error)
+          SchedulerLogger.jobError("[SCHEDULER] error", e, {
+            jobName: "deactivate_expired_contracts",
+            scope: "deactivate_contracts",
+          });
+      }
     }
   );
 };

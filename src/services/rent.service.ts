@@ -41,7 +41,9 @@ export const getRentByPropertyId = async (propertyId: number) => {
   return orderedResult[0];
 };
 
-export const createRentByProperyIdAction = async (props: IRentCreateDto) => {
+export const createRentByProperyIdAction = async (
+  props: IRentCreateDto
+): Promise<{ success: boolean; message?: string }> => {
   try {
     const {
       contractNumber,
@@ -116,9 +118,8 @@ export const createRentByProperyIdAction = async (props: IRentCreateDto) => {
       await propertyRepository.update(propertyId, {
         isRented: true,
       });
-
-      return { success: true };
     });
+    return { success: true };
   } catch (e) {
     return {
       success: false,
@@ -272,5 +273,26 @@ export const invoicingContacts = async (days: number = 2) => {
   } catch (error) {
     console.error("Error in expiredContracts:", error);
     throw error;
+  }
+};
+
+export const getActiveRents = async () => {
+  try {
+    const activeRents = await rentRepository.find({
+      where: { isActiveRent: true },
+    });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayUtc = today.getTime();
+
+    activeRents.forEach(async (item) => {
+      if (new Date(item.endContractDate).getTime() < todayUtc) {
+        item.isActiveRent = false;
+      }
+    });
+    await rentRepository.save(activeRents);
+  } catch (e) {
+    console.log(`Ошибка поска ${e}`);
   }
 };

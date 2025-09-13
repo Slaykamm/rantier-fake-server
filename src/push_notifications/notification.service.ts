@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import { logger } from "../logger/logger";
 
 type NotificationPayload = {
   title: string;
@@ -25,7 +26,34 @@ export class PushNotificationService {
       ...options,
     };
 
-    return admin.messaging().send(message);
+    const key = data?.key;
+    const deviceId = typeof key === "string" ? key.split("_").pop() : undefined;
+    const notificationId = data?.notificationId;
+    const mask = (t: string) => (t ? `${t.slice(0, 6)}...${t.slice(-4)}` : "");
+
+    try {
+      const messageId = await admin.messaging().send(message);
+      logger.info("[PUSH] send.success", {
+        category: "push",
+        deviceId: deviceId || null,
+        token: mask(token),
+        at: new Date().toISOString(),
+        messageId,
+        notificationId: notificationId || null,
+      });
+      return messageId;
+    } catch (e) {
+      const err = e as Error;
+      logger.error("[PUSH] send.error", {
+        category: "push",
+        deviceId: deviceId || null,
+        token: mask(token),
+        at: new Date().toISOString(),
+        error: err.message,
+        notificationId: notificationId || null,
+      });
+      throw e;
+    }
   }
 
   //   /**

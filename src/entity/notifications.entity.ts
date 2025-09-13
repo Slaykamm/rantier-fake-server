@@ -5,7 +5,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { Counter } from "./counter.entity";
 import { User } from "./user.entity";
 
 @Entity()
@@ -27,6 +26,9 @@ export class Notifications {
 
   @Column("text", { nullable: true })
   token?: string;
+
+  @Column("text", { nullable: true })
+  propertyId?: number;
 
   @Column("text", { nullable: true })
   title?: string;

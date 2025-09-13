@@ -14,6 +14,7 @@ import "dotenv/config";
 import settingsRouter from "./routes/settings.routes";
 import { startCronJobs } from "./scheduler/cron.service";
 import userDevicesRouter from "./routes/userdevices.routes";
+import { apiLogger as apiRequestLogger } from "./logger/apiLogger";
 const serviceAccount = require("../firebase-adminsdk.json");
 
 // Type declarations
@@ -41,6 +42,7 @@ admin.initializeApp({
 // Middleware для обработки JSON-запросов
 app.use(cors());
 app.use(express.json());
+app.use(apiRequestLogger);
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 AppDataSource.initialize()
@@ -71,39 +73,6 @@ AppDataSource.initialize()
 
     // RENT
     app.use("/rent", rentRouter);
-
-    // app.get("/service_company", (req: Request, res: Response) => {
-    //   // @ts-ignore
-    //   res.send(service_company);
-    // });
-    // app.get("/service_company/:id", (req: Request, res: Response) => {
-    //   // @ts-ignore
-    //   const id = req.params.id;
-    //   try {
-    //     if (service_company[Number(id) - 1]) {
-    //       // @ts-ignore
-    //       res.send(service_company[Number(id) - 1]);
-    //     } else {
-    //       // @ts-ignore
-    //       res.json({ status: `Данного ID: ${id} нет в БД` });
-    //     }
-    //   } catch {
-    //     // @ts-ignore
-    //     res.json({ status: `Данного ID: ${id} нет в БД` });
-    //   }
-    // });
-    // app.post("/service_company/create", (req: Request, res: Response) => {
-    //   try {
-    //     // @ts-ignore
-    //     res.status(201).json({ status: "success", data: req.body });
-    //   } catch (e) {}
-    // });
-    // app.patch("/service_company/:id", (req: Request, res: Response) => {
-    //   try {
-    //     // @ts-ignore
-    //     res.status(203).json({ status: "success edited", data: req.body });
-    //   } catch (e) {}
-    // });
 
     // TENANT
     app.use("/tenant", tenantRouter);
