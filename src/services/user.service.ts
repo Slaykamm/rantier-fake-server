@@ -4,6 +4,7 @@ import { IUpdateUserDto } from "../models/user.model";
 import { getTgUsername } from "../utils/untils";
 import path from "path";
 import fs from "fs";
+import { Settings } from "../entity/settings.entity";
 
 const userRepository = AppDataSource.getRepository(User);
 
@@ -32,6 +33,19 @@ export const createUserByUserId = async (userId: string) => {
       });
 
       await userRepository.save(newUser);
+
+      const settingRepository = transactionUserManager.getRepository(Settings);
+      const newUserSettings = settingRepository.create({
+        userId: newUser.id,
+        email: false,
+        telegramm: false,
+        counter_reminder: false,
+        auto_invoicing: false,
+        notification_service: true,
+        payment_reminder: false,
+      });
+
+      await settingRepository.save(newUserSettings);
     });
 
     return {

@@ -4,3 +4,4 @@ firebase-adminsdk.json
 /src/uploads/
 /dist/
 /logs/
+rantier.sqlite

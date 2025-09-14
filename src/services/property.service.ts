@@ -27,14 +27,28 @@ export const getPropertiesByUserId = async (userId: string) => {
 
     const enrichedProperties: Property[] = [];
 
+    // function getIsRent({
+    //   data,
+    //   propertyId,
+    // }: {
+    //   data?: Rent | null | undefined;
+    //   propertyId: number;
+    // }) {
+
+    //   const isActualValue = data?.find(rent => rent.)
+
+    // }
+
     for (const property of respData) {
       const result = await findRentByProperyIdAction(property.id);
+      console.log("test1111", result);
       enrichedProperties.push({
         ...property,
         isRented: !!result.data?.isActiveRent,
       });
     }
 
+    console.log("test enrichedProperties", enrichedProperties);
     return enrichedProperties;
   }
 };
@@ -82,7 +96,7 @@ export const deletePropertyById = async (
       });
       const counterIds = propertyCounters?.map((counter) => counter.id);
       if (counterIds?.length) {
-        asyncMapParallel(counterIds, async (num) => {
+        await asyncMapParallel(counterIds, async (num) => {
           const indicationsByCounterId = await indicationsManager.find({
             where: { counterId: num },
           });

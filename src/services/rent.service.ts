@@ -172,27 +172,20 @@ export const finishRentByProperyIdAction = async (propertyId: number) => {
 
 export const findRentByProperyIdAction = async (propertyId: number) => {
   try {
-    const result = await AppDataSource.transaction(
-      async (transactionalEntityManager) => {
-        // 1. Находим самую свежую активную аренду
-        const mostRecentActiveRent = await transactionalEntityManager
-          .createQueryBuilder(Rent, "rent")
-          .leftJoinAndSelect("rent.property", "property")
-          .where("rent.propertyId = :propertyId", { propertyId })
-          .andWhere("rent.isActiveRent = :isActiveRent", { isActiveRent: true })
-          .andWhere("rent.endContractDate >= :currentDate", {
-            currentDate: new Date(),
-          })
-          .orderBy("rent.createAt", "DESC")
-          .getOne();
-
-        return mostRecentActiveRent; // Возвращаем запись, которую деактивировали
-      }
-    );
+    const mostRecentActiveRent = await AppDataSource.getRepository(Rent)
+      .createQueryBuilder("rent")
+      .leftJoinAndSelect("rent.property", "property")
+      .where("rent.propertyId = :propertyId", { propertyId })
+      .andWhere("rent.isActiveRent = :isActiveRent", { isActiveRent: true })
+      .andWhere("rent.endContractDate >= :currentDate", {
+        currentDate: new Date(),
+      })
+      .orderBy("rent.createAt", "DESC")
+      .getOne();
 
     return {
       success: true,
-      data: result,
+      data: mostRecentActiveRent,
     };
   } catch (e) {
     return {
@@ -201,6 +194,7 @@ export const findRentByProperyIdAction = async (propertyId: number) => {
     };
   }
 };
+
 export const expiredContracts = async (days: number = 5) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
