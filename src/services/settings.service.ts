@@ -1,7 +1,8 @@
+import { ESettingsServiceNames } from "../consts/settings_enum";
 import { AppDataSource } from "../database/data-source";
 import { Settings } from "../entity/settings.entity";
 import { ISetSettingsDto } from "../models/settings.model";
-import { getUserByUserId } from "./user.service";
+import { getUserById, getUserByUserId } from "./user.service";
 
 const settingsRepository = AppDataSource.getRepository(Settings);
 
@@ -43,18 +44,29 @@ export const setSettings = async (props: ISetSettings) => {
       return { success: false, message: "No settings for user found" };
     }
 
-    respData.auto_invoicing = auto_invoicing || respData?.auto_invoicing;
-    respData.counter_reminder = counter_reminder || respData?.counter_reminder;
-    respData.email = email || respData?.email;
-    respData.notification_service =
-      notification_service || respData?.notification_service;
-    respData.payment_reminder = payment_reminder || respData?.payment_reminder;
-    respData.telegramm = telegramm || respData?.telegramm;
-
+    respData.auto_invoicing = auto_invoicing || false;
+    respData.counter_reminder = counter_reminder || false;
+    respData.email = email || false;
+    respData.notification_service = notification_service || false;
+    respData.payment_reminder = payment_reminder || false;
+    respData.telegramm = telegramm || false;
     await settingsRepository.save(respData);
 
     return { success: true };
   } else {
     return { success: false, message: "No such user found" };
   }
+};
+
+export const getSettingValueByName = async ({
+  user_Id,
+  settingName,
+}: {
+  user_Id: number;
+  settingName: ESettingsServiceNames;
+}) => {
+  const respData = await settingsRepository.findOne({
+    where: { userId: user_Id },
+  });
+  return { success: true, data: respData?.[settingName] };
 };

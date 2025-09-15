@@ -9,6 +9,8 @@ import * as NotificationService from "../services/notifications.service";
 import { getActualNotifications } from "../services/notifications.service";
 import { PushNotificationService } from "../push_notifications/notification.service";
 import { SchedulerLogger } from "../logger/schedulerLogger";
+import { getSettingValueByName } from "../services/settings.service";
+import { ESettingsServiceNames } from "../consts/settings_enum";
 
 // Делаем уникальный идентификатор состоящий из: ТипШедулера_ID строчки инициатора пуша_DeviceId куда слать пуш
 
@@ -25,13 +27,22 @@ export const startCronJobs = () => {
       try {
         const checkEndContractDate = await expiredContracts();
         if (checkEndContractDate?.length) {
-          checkEndContractDate.forEach((contract) => {
-            if (contract.property?.user?.devices?.length) {
+          checkEndContractDate.forEach(async (contract) => {
+            // Проверяем что нотификейш сервис активен
+            const notificationData = await getSettingValueByName({
+              settingName: ESettingsServiceNames.NOTIFICATION_SERVICE,
+              user_Id: contract.property.userId,
+            });
+            const isNotificationActive = !!notificationData.data;
+            if (
+              contract.property?.user?.devices?.length &&
+              !!isNotificationActive
+            ) {
               contract.property?.user?.devices.forEach(async (device) => {
                 await NotificationService.createNotification({
                   body: `Истекает контракт №${contract.contract} по аренде недвижимости ${contract.property.name}`,
                   key: `${ESchedulerType.expiredContracts}_${contract.id}_${device.deviceId}`,
-                  userId: contract.property.user.id,
+                  userId: contract.property.userId,
                   propertyId: contract.propertyId,
                   isError: false,
                   title: "Контракт аренды истекает",
@@ -51,7 +62,7 @@ export const startCronJobs = () => {
     }
   );
 
-  // Проверка на то что пора выставлять счета и присылать счетчики контракты
+  // Проверка  за 3 дня на то чтоприсылать счетчики для выставления счетов
   cron.schedule(
     // process.env.SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
     process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
@@ -64,8 +75,17 @@ export const startCronJobs = () => {
       try {
         const getNeedToInvoicedContracts = await invoicingContacts();
         if (getNeedToInvoicedContracts?.length) {
-          getNeedToInvoicedContracts.forEach((contract) => {
-            if (contract.property?.user?.devices?.length) {
+          getNeedToInvoicedContracts.forEach(async (contract) => {
+            // Проверяем что нотификейш сервис активен
+            const notificationData = await getSettingValueByName({
+              settingName: ESettingsServiceNames.NOTIFICATION_SERVICE,
+              user_Id: contract.property.userId,
+            });
+            const isNotificationActive = !!notificationData.data;
+            if (
+              contract.property?.user?.devices?.length &&
+              isNotificationActive
+            ) {
               contract.property?.user?.devices.forEach(async (device) => {
                 if (!!device.token) {
                   await NotificationService.createNotification({
@@ -104,30 +124,38 @@ export const startCronJobs = () => {
         const actualNotifications = await getActualNotifications();
         if (actualNotifications?.length) {
           actualNotifications.forEach(
-            async ({ id, body, token, key, title, propertyId }) => {
-              try {
-                await PushNotificationService.sendToDevice(
-                  token || "",
-                  {
-                    title: title || "",
-                    body: body || "",
-                  },
-                  {
-                    key: key || "",
-                    notificationId: String(id),
-                    propertyId: String(propertyId),
-                  }
-                );
+            async ({ id, body, token, key, title, propertyId, userId }) => {
+              const notificationData = await getSettingValueByName({
+                settingName: ESettingsServiceNames.NOTIFICATION_SERVICE,
+                user_Id: userId,
+              });
+              const isNotificationActive = !!notificationData.data;
 
-                await NotificationService.setSuccessExecutedFlag(id);
-              } catch (e) {
-                if (e instanceof Error) {
-                  SchedulerLogger.jobError("[SCHEDULER] error", e, {
-                    jobName: "push_notifications_sender",
-                    id,
-                    scope: "push_send",
-                  });
-                  await NotificationService.setErrorExecutedFlag(id);
+              if (!!isNotificationActive) {
+                try {
+                  await PushNotificationService.sendToDevice(
+                    token || "",
+                    {
+                      title: title || "",
+                      body: body || "",
+                    },
+                    {
+                      key: key || "",
+                      notificationId: String(id),
+                      propertyId: String(propertyId),
+                    }
+                  );
+
+                  await NotificationService.setSuccessExecutedFlag(id);
+                } catch (e) {
+                  if (e instanceof Error) {
+                    SchedulerLogger.jobError("[SCHEDULER] error", e, {
+                      jobName: "push_notifications_sender",
+                      id,
+                      scope: "push_send",
+                    });
+                    await NotificationService.setErrorExecutedFlag(id);
+                  }
                 }
               }
             }

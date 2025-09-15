@@ -1,3 +1,4 @@
+import { ESettingsServiceNames } from "../consts/settings_enum";
 import { AppDataSource } from "../database/data-source";
 import { Notifications } from "../entity/notifications.entity";
 import { Settings } from "../entity/settings.entity";
@@ -10,7 +11,7 @@ interface INotificationsCreate
   extends Omit<Notifications, "id" | "createAt" | "isExecuted" | "user"> {}
 
 export const createNotification = async (request: INotificationsCreate) => {
-  const { body, key, title, token, propertyId } = request;
+  const { body, key, title, token, propertyId, userId } = request;
 
   const presentNofitication = await notificationsRepository.find({
     where: {
@@ -29,6 +30,7 @@ export const createNotification = async (request: INotificationsCreate) => {
     body,
     key,
     title,
+    userId,
     propertyId,
     token,
     isExecuted: false,
@@ -39,6 +41,8 @@ export const createNotification = async (request: INotificationsCreate) => {
 };
 
 export const getActualNotifications = async () => {
+  // TODO сначала получаем значение тогла нотификейшн труе
+
   const actualNotifications = await notificationsRepository.find({
     where: { isExecuted: false },
   });

@@ -41,14 +41,12 @@ export const getPropertiesByUserId = async (userId: string) => {
 
     for (const property of respData) {
       const result = await findRentByProperyIdAction(property.id);
-      console.log("test1111", result);
       enrichedProperties.push({
         ...property,
         isRented: !!result.data?.isActiveRent,
       });
     }
 
-    console.log("test enrichedProperties", enrichedProperties);
     return enrichedProperties;
   }
 };

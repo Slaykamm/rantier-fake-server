@@ -13,6 +13,11 @@ export const getUserByUserId = async (userId: string) => {
   return respData;
 };
 
+export const getUserById = async (id: number) => {
+  const respData = await userRepository.findOneBy({ id });
+  return respData;
+};
+
 export const createUserByUserId = async (userId: string) => {
   try {
     const presentUser = await userRepository.findOneBy({ userId });

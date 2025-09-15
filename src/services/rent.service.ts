@@ -242,7 +242,7 @@ export const expiredContracts = async (days: number = 5) => {
   }
 };
 
-export const invoicingContacts = async (days: number = 2) => {
+export const invoicingContacts = async (days: number = 3) => {
   const today = new Date();
   const targetDate = new Date();
   targetDate.setDate(today.getDate() + days);
