@@ -85,78 +85,79 @@ export const deletePropertyById = async (
         throw Error("Аренда активна. Необходимо завершить ее до удаления ОН.");
       }
 
-      const counterManager = transManager.getRepository(Counter);
-      const indicationsManager = transManager.getRepository(Indications);
+      // const counterManager = transManager.getRepository(Counter);
+      // const indicationsManager = transManager.getRepository(Indications);
 
-      // находим счетчики. и по каждому счетчику сначала удаляем показания. потом и их.
-      const propertyCounters = await counterManager.find({
-        where: { propertyId: id },
-      });
-      const counterIds = propertyCounters?.map((counter) => counter.id);
-      if (counterIds?.length) {
-        await asyncMapParallel(counterIds, async (num) => {
-          const indicationsByCounterId = await indicationsManager.find({
-            where: { counterId: num },
-          });
-          const indicationIds = indicationsByCounterId?.map(
-            (indication) => indication.id
-          );
-          if (!!indicationIds?.length) {
-            await indicationsManager
-              .createQueryBuilder()
-              .delete()
-              .where("id IN (:...indicationIds)", { indicationIds })
-              .execute();
-          }
-          await counterManager.delete({ id: num });
-        });
-      }
-      // тоже самое аренда => арендодатель
-      const rentManager = transManager.getRepository(Rent);
-      const tenantManager = transManager.getRepository(Tenant);
-      const transactionManager = transManager.getRepository(Transactions);
+      // // находим счетчики. и по каждому счетчику сначала удаляем показания. потом и их.
+      // const propertyCounters = await counterManager.find({
+      //   where: { propertyId: id },
+      // });
+      // const counterIds = propertyCounters?.map((counter) => counter.id);
+      // if (counterIds?.length) {
+      //   await asyncMapParallel(counterIds, async (num) => {
+      //     const indicationsByCounterId = await indicationsManager.find({
+      //       where: { counterId: num },
+      //     });
+      //     const indicationIds = indicationsByCounterId?.map(
+      //       (indication) => indication.id
+      //     );
+      //     if (!!indicationIds?.length) {
+      //       await indicationsManager
+      //         .createQueryBuilder()
+      //         .delete()
+      //         .where("id IN (:...indicationIds)", { indicationIds })
+      //         .execute();
+      //     }
+      //     await counterManager.delete({ id: num });
+      //   });
+      // }
+      // // тоже самое аренда => арендодатель
+      // const rentManager = transManager.getRepository(Rent);
+      // const tenantManager = transManager.getRepository(Tenant);
+      // const transactionManager = transManager.getRepository(Transactions);
 
-      const propertyRents = await rentManager.find({
-        where: { propertyId: id },
-      });
+      // const propertyRents = await rentManager.find({
+      //   where: { propertyId: id },
+      // });
 
-      const rentIds = propertyRents?.map((rent) => rent.id);
+      // const rentIds = propertyRents?.map((rent) => rent.id);
 
-      if (rentIds?.length) {
-        asyncMapParallel(rentIds, async (rentId) => {
-          const tenantsByRentId = await tenantManager.find({
-            where: { rentId },
-          });
-          const tenantIds = tenantsByRentId?.map((tenant) => tenant.id);
-          if (!!tenantIds?.length) {
-            await tenantManager
-              .createQueryBuilder()
-              .delete()
-              .where("id IN (:...tenantIds)", { tenantIds })
-              .execute();
-          }
+      // if (rentIds?.length) {
+      //   asyncMapParallel(rentIds, async (rentId) => {
+      //     const tenantsByRentId = await tenantManager.find({
+      //       where: { rentId },
+      //     });
+      //     const tenantIds = tenantsByRentId?.map((tenant) => tenant.id);
+      //     if (!!tenantIds?.length) {
+      //       await tenantManager
+      //         .createQueryBuilder()
+      //         .delete()
+      //         .where("id IN (:...tenantIds)", { tenantIds })
+      //         .execute();
+      //     }
 
-          const transactionByRentId = await transactionManager.find({
-            where: { rentId },
-          });
+      //     const transactionByRentId = await transactionManager.find({
+      //       where: { rentId },
+      //     });
 
-          const transactionIds = transactionByRentId?.map(
-            (transaction) => transaction.id
-          );
-          if (!!transactionIds?.length) {
-            await transactionManager
-              .createQueryBuilder()
-              .delete()
-              .where("id IN (:...transactionIds)", { transactionIds })
-              .execute();
-          }
+      //     const transactionIds = transactionByRentId?.map(
+      //       (transaction) => transaction.id
+      //     );
+      //     if (!!transactionIds?.length) {
+      //       await transactionManager
+      //         .createQueryBuilder()
+      //         .delete()
+      //         .where("id IN (:...transactionIds)", { transactionIds })
+      //         .execute();
+      //     }
 
-          await rentManager.delete({ id: rentId });
-        });
-      }
+      //     await rentManager.delete({ id: rentId });
+      //   });
+      // }
       const propertyManager = transManager.getRepository(Property);
       await propertyManager.delete({ id });
     });
+    return { success: true };
   } catch (e) {
     if (e instanceof Error) {
       return { success: false, message: e.message };
@@ -211,58 +212,52 @@ export const createPropertyAction = async (
 
         await propertyRepository.save(newProperty);
 
-        await AppDataSource.manager.transaction(
-          async (transactionCountersManager) => {
-            if (!newProperty) {
-              return {
-                success: false,
-                message: "Something went wrong with property creation!",
-              };
-            }
-            const counterRepository =
-              transactionCountersManager.getRepository(Counter);
-            const counterTypeRepository =
-              transactionCountersManager.getRepository(CounterType);
-            const indicationsRepository =
-              transactionCountersManager.getRepository(Indications);
+        if (!newProperty) {
+          return {
+            success: false,
+            message: "Something went wrong with property creation!",
+          };
+        }
+        const counterRepository =
+          transactionPropertyManager.getRepository(Counter);
+        const counterTypeRepository =
+          transactionPropertyManager.getRepository(CounterType);
+        const indicationsRepository =
+          transactionPropertyManager.getRepository(Indications);
 
-            if (!!counters?.length) {
-              parseCounters(counters as any)?.forEach(async (counter) => {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0); // Обнуляем часы, минуты, секунды, миллисекунды
-                const verificationDate = new Date(counter.verificationDate);
-                const nextVerificationDate = new Date(
-                  counter.nextVerificationDate
-                );
+        if (!!counters?.length) {
+          parseCounters(counters, !!imagePath)?.forEach(async (counter) => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Обнуляем часы, минуты, секунды, миллисекунды
+            const verificationDate = new Date(counter.verificationDate);
+            const nextVerificationDate = new Date(counter.nextVerificationDate);
 
-                const isCounterActive = !!(
-                  verificationDate <= today && nextVerificationDate >= today
-                );
+            const isCounterActive = !!(
+              verificationDate <= today && nextVerificationDate >= today
+            );
 
-                const counterByType = await counterTypeRepository.findOneBy({
-                  type: counter.counterType,
-                });
+            const counterByType = await counterTypeRepository.findOneBy({
+              type: counter.counterType,
+            });
 
-                const newCounter = counterRepository.create({
-                  counterTypeId: counterByType?.id,
-                  counterId: counter.counterId,
-                  verificationDate: counter.verificationDate,
-                  nextVerificationDate: counter.nextVerificationDate,
-                  propertyId: newProperty!.id,
-                  isActive: isCounterActive,
-                });
-                await counterRepository.save(newCounter);
+            const newCounter = counterRepository.create({
+              counterTypeId: counterByType?.id,
+              counterId: counter.counterId,
+              verificationDate: counter.verificationDate,
+              nextVerificationDate: counter.nextVerificationDate,
+              propertyId: newProperty!.id,
+              isActive: isCounterActive,
+            });
+            await counterRepository.save(newCounter);
+            const newIndication = indicationsRepository.create({
+              counterId: newCounter.id,
+              createAt: today.toString(),
+              value: counter.counterValue,
+            });
+            await indicationsRepository.save(newIndication);
+          });
+        }
 
-                const newIndication = indicationsRepository.create({
-                  counterId: newCounter.id,
-                  createAt: today.toString(),
-                  value: counter.counterValue,
-                });
-                await indicationsRepository.save(newIndication);
-              });
-            }
-          }
-        );
         return {
           success: true,
           data: JSON.parse(JSON.stringify(newProperty)),
@@ -270,7 +265,7 @@ export const createPropertyAction = async (
       }
     );
   } catch (e) {
-    // console.log("TEST e", e);
+    console.log("TEST e", e);
     return {
       success: false,
       message: `Error while creating property ${e}`,

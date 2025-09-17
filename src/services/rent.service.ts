@@ -43,7 +43,7 @@ export const getRentByPropertyId = async (propertyId: number) => {
 
 export const createRentByProperyIdAction = async (
   props: IRentCreateDto
-): Promise<{ success: boolean; message?: string }> => {
+): Promise<{ success: boolean; message?: string; data?: Rent[] }> => {
   try {
     const {
       contractNumber,
@@ -56,10 +56,11 @@ export const createRentByProperyIdAction = async (
       paymentDate,
       tenants,
     } = props;
+
+    let newRent: Rent | null;
     await AppDataSource.manager.transaction(async (transactionManager) => {
       const rentRepository = transactionManager.getRepository(Rent);
 
-      let newRent: Rent | null;
       const today = new Date().toISOString();
 
       newRent = rentRepository.create({
@@ -77,7 +78,7 @@ export const createRentByProperyIdAction = async (
       await rentRepository.save(newRent);
 
       let newTenants; //: Tenant[] | null
-      if (tenants?.length) {
+      if (tenants?.length && !!newRent) {
         const tenantRepository = transactionManager.getRepository(Tenant);
 
         tenants.forEach(async (tenant) => {
@@ -107,7 +108,7 @@ export const createRentByProperyIdAction = async (
             passportIssued,
             passportDate,
             // secondName: "",
-            rentId: newRent.id,
+            rentId: newRent?.id,
           });
 
           await tenantRepository.save(newTenant);
@@ -119,7 +120,7 @@ export const createRentByProperyIdAction = async (
         isRented: true,
       });
     });
-    return { success: true };
+    return { success: true, data: [newRent!] };
   } catch (e) {
     return {
       success: false,

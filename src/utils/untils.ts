@@ -29,9 +29,16 @@ export const getTgUsername = (tgUsername?: string) => {
   return "@" + tgUsername;
 };
 
-export function parseCounters(countersData?: string): ICounterCreateDto[] {
+export function parseCounters(
+  countersData?: string | ICounterCreateDto[],
+  isImage?: boolean
+): ICounterCreateDto[] {
   if (!countersData) {
     return [];
   }
-  return JSON.parse(countersData) as unknown as ICounterCreateDto[];
+  if (!isImage && Array.isArray(countersData)) {
+    return countersData as ICounterCreateDto[];
+  }
+
+  return JSON.parse(countersData as string) as unknown as ICounterCreateDto[];
 }

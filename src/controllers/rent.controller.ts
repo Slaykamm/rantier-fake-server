@@ -70,7 +70,7 @@ export const createRentByProperyId = async (
   try {
     const result = await rentService.createRentByProperyIdAction(req.body);
     if (!!result?.success) {
-      res.status(200).json({ status: "success" });
+      res.status(200).json({ status: "success", data: result.data });
     } else {
       res.status(200).json({
         status: "error",

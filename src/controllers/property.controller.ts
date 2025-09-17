@@ -10,7 +10,6 @@ export const getProperty = async (
   res: Response<IResponseDto<Property>>
 ) => {
   try {
-    // console.log("test req", req?.user?.firebase?.identities.email?.[0]);
     const properties = await properyService.getPropertiesByUserId(
       req?.user?.email || ""
     );
@@ -61,22 +60,14 @@ export const createProperty = async (
       ...req?.body,
       userEmail: req?.user?.email || "",
     });
-    if (!!respData?.success) {
-      res.status(200).json({
-        status: "success",
-        //@ts-ignore
-        data: [respData.data],
-      });
-    } else {
-      res.status(500).json({
-        status: "error",
-        message: `Something went wrong with PropertyCreation`,
-      });
-    }
+    res.status(200).json({
+      status: "success",
+      message: "Property created",
+    });
   } catch (e) {
     res.status(500).json({
       status: "error",
-      message: `Something went wrong with PropertyCreation ${e}`,
+      message: `Something 1went wrong with PropertyCreation ${e}`,
     });
   }
 };
@@ -166,6 +157,7 @@ export const deletePropertyById = async (
   }
   try {
     const result = await properyService.deletePropertyById(id);
+    console.log("test RESULT DELETE", result);
     if (!!result?.success) {
       res.status(200).json({ status: "success" });
     } else {
