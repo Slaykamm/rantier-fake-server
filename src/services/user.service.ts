@@ -152,6 +152,5 @@ export const checkUser = async (userId: string) => {
   const respSettingsData = await settingsRepository.findOneBy({
     userId: respUserData?.id,
   });
-  console.log("test11", { respUserData, respSettingsData });
   return { success: !!respUserData && !!respSettingsData };
 };
