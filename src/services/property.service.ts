@@ -27,18 +27,6 @@ export const getPropertiesByUserId = async (userId: string) => {
 
     const enrichedProperties: Property[] = [];
 
-    // function getIsRent({
-    //   data,
-    //   propertyId,
-    // }: {
-    //   data?: Rent | null | undefined;
-    //   propertyId: number;
-    // }) {
-
-    //   const isActualValue = data?.find(rent => rent.)
-
-    // }
-
     for (const property of respData) {
       const result = await findRentByProperyIdAction(property.id);
       enrichedProperties.push({

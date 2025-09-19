@@ -140,3 +140,32 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getCheckUser = async (req: Request, res: Response) => {
+  try {
+    const userId = req?.user?.email || "";
+    if (!userId) {
+      res.status(401).json({
+        status: "error",
+        message: `No token provided`,
+      });
+    }
+    const respData = await userService.checkUser(userId);
+
+    if (!!respData.success) {
+      res.status(200).json({
+        status: "success",
+      });
+    } else {
+      res.status(200).json({
+        status: "error",
+        message: `Something went wrong with User Account`,
+      });
+    }
+  } catch (e) {
+    res.status(500).json({
+      status: "error",
+      message: `Something went wrong with User Account Service ${e}`,
+    });
+  }
+};

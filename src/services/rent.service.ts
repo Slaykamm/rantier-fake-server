@@ -281,13 +281,19 @@ export const getActiveRents = async () => {
     today.setHours(0, 0, 0, 0);
     const todayUtc = today.getTime();
 
+    const contractsToClose = activeRents.filter(
+      (contract) => new Date(contract.endContractDate).getTime() < todayUtc
+    );
+
     activeRents.forEach(async (item) => {
       if (new Date(item.endContractDate).getTime() < todayUtc) {
         item.isActiveRent = false;
       }
     });
     await rentRepository.save(activeRents);
+
+    return contractsToClose;
   } catch (e) {
-    console.log(`Ошибка поска ${e}`);
+    console.log(`Ошибка поиска ${e}`);
   }
 };

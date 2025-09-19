@@ -15,6 +15,7 @@ import { ESettingsServiceNames } from "../consts/settings_enum";
 // Делаем уникальный идентификатор состоящий из: ТипШедулера_ID строчки инициатора пуша_DeviceId куда слать пуш
 
 export const startCronJobs = () => {
+  // Шедулер для отправки нотификейшенов для истекающиих контрактов. Проверяет что осталось <= 5 дней до истечения контракта.
   cron.schedule(
     // process.env.SCHEDULE_PAYMENT_REMIDER || "0 12 * * *",
     process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "0 12 * * *",
@@ -62,7 +63,7 @@ export const startCronJobs = () => {
     }
   );
 
-  // Проверка  за 3 дня на то чтоприсылать счетчики для выставления счетов
+  // Проверка  за 3 дня на то что присылать счетчики для выставления счетов
   cron.schedule(
     // process.env.SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
     process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
@@ -71,7 +72,6 @@ export const startCronJobs = () => {
         jobName: ESchedulerType.invoicingTrigger,
         cron: process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
       });
-      // Проверка на итекающие контракты
       try {
         const getNeedToInvoicedContracts = await invoicingContacts();
         if (getNeedToInvoicedContracts?.length) {
@@ -176,7 +176,7 @@ export const startCronJobs = () => {
   );
 
   // Шедулер для закрытие контрактов аренды с закончившейся датой.
-
+  // ДОБАВИТЬ ДЖОБ ЧТОБЫ ВЫСЫЛАЛ Notification
   cron.schedule(
     process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "16 0 * * *",
     // process.env.SCHEDULE_DEACTIVATE_CONTRACT || "16 0 * * *",
@@ -187,7 +187,9 @@ export const startCronJobs = () => {
       });
       // Проверка на истекашие контракты
       try {
-        await getActiveRents();
+        const contractsToClose = await getActiveRents();
+        // TODO Сделать тут добавление в сервис пушей на отправку.
+        // contractsToClose[0].property.userId
       } catch (e) {
         if (e instanceof Error)
           SchedulerLogger.jobError("[SCHEDULER] error", e, {

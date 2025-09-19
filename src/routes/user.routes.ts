@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authenticate } from "../auth/auth";
 import {
+  getCheckUser,
   getOrCreateUserData,
   getUserAvatar,
   updateUserAvatar,
@@ -23,5 +24,6 @@ userRouter.post(
   // @ts-ignore
   updateUserAvatar
 );
+userRouter.get("/checkUser", authenticate, getCheckUser);
 
 export default userRouter;

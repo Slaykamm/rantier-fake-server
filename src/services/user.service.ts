@@ -5,6 +5,7 @@ import { getTgUsername } from "../utils/untils";
 import path from "path";
 import fs from "fs";
 import { Settings } from "../entity/settings.entity";
+import { UserDevices } from "../entity/userDevices.entity";
 
 const userRepository = AppDataSource.getRepository(User);
 
@@ -139,4 +140,18 @@ export const updateUserAvatar = async (userId: string, avatarPath: string) => {
       message: `Error updating avatar: ${e}`,
     };
   }
+};
+
+export const checkUser = async (userId: string) => {
+  // const devicesRepository = AppDataSource.getRepository(UserDevices);
+  const settingsRepository = AppDataSource.getRepository(Settings);
+  const respUserData = await userRepository.findOneBy({ userId });
+  // const respDevicesData = await devicesRepository.findOneBy({
+  //   userId: respUserData?.id,
+  // });
+  const respSettingsData = await settingsRepository.findOneBy({
+    userId: respUserData?.id,
+  });
+  console.log("test11", { respUserData, respSettingsData });
+  return { success: !!respUserData && !!respSettingsData };
 };
