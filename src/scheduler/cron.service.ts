@@ -73,7 +73,8 @@ export const startCronJobs = () => {
         cron: process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
       });
       try {
-        const getNeedToInvoicedContracts = await invoicingContacts();
+        // TODO Добавить слайдер для выбора кол-ва дней за сколько запрашивать счетчики
+        const getNeedToInvoicedContracts = await invoicingContacts(2);
         if (getNeedToInvoicedContracts?.length) {
           getNeedToInvoicedContracts.forEach(async (contract) => {
             // Проверяем что нотификейш сервис активен
