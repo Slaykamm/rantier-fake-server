@@ -257,7 +257,7 @@ export const invoicingContacts = async (days: number = 3) => {
       .leftJoinAndSelect("rent.property", "property")
       .leftJoinAndSelect("property.user", "user")
       .leftJoinAndSelect("user.devices", "devices")
-      .where("rent.paymentDate LIKE :pattern", {
+      .where("rent.requestIndicatorsDate LIKE :pattern", {
         pattern: `%-${targetDay}`,
       })
       .andWhere("rent.isActiveRent = :isActive", { isActive: true })
