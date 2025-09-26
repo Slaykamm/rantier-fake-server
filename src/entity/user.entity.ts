@@ -1,5 +1,4 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Counter } from "./counter.entity";
 import { Property } from "./property.entity";
 import { Settings } from "./settings.entity";
 import { UserDevices } from "./userDevices.entity";
@@ -30,6 +29,9 @@ export class User {
 
   @Column("text", { nullable: true })
   tgNickname?: string;
+
+  @Column("boolean", { nullable: true, default: true })
+  initialLogin?: boolean;
 
   @OneToMany(() => Property, (property) => property.user) // указывает на поле к которому коннектим там
   properties!: Property[]; //указываем на обратную сущность.  куда пихаем все найденные связи.

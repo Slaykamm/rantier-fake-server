@@ -43,12 +43,19 @@ export const createUserByUserId = async (userId: string) => {
       const settingRepository = transactionUserManager.getRepository(Settings);
       const newUserSettings = settingRepository.create({
         userId: newUser.id,
-        email: false,
-        telegramm: false,
-        counter_reminder: false,
-        auto_invoicing: false,
-        notification_service: true,
-        payment_reminder: false,
+        telegrammService: false,
+        emailService: false,
+        notificationService: true,
+        isContractExpired: true,
+        contractExpiredDays: 5,
+        isCounterReminder: true,
+        counterReminderDays: 3,
+        isPaymentReminder: false,
+        paymentReminderDays: 1,
+        isRequestPaymentRemind: false,
+        requestPaymentRemindDays: 2,
+        isAutoInvoicing: false,
+        autoInvoicingDays: 1,
       });
 
       await settingRepository.save(newUserSettings);

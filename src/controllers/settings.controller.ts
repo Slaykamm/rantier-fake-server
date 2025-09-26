@@ -23,7 +23,7 @@ export const getSettings = async (
 };
 
 export const setSettings = async (
-  req: Request<{}, {}, ISetSettingsDto>,
+  req: Request<{}, {}, Omit<Settings, "id" | "userId">>,
   res: Response<IResponseDto<Settings>>
 ) => {
   if (Object.keys(req?.body).length) {

@@ -48,7 +48,7 @@ export const getActualNotifications = async () => {
   });
 
   const permittedNotificationsUsers = await getAllSettings.find({
-    where: { notification_service: false },
+    where: { notificationService: false },
   });
 
   const userIds = permittedNotificationsUsers.map((user) => user.id);

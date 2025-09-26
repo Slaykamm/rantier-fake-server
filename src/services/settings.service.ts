@@ -20,19 +20,31 @@ export const getSettings = async (userId: string) => {
 };
 
 interface ISetSettings {
-  req: ISetSettingsDto;
+  req: Omit<Settings, "id" | "userId">; //ISetSettingsDto;
   userId: string;
 }
 
 export const setSettings = async (props: ISetSettings) => {
   const { req, userId } = props;
   const {
-    auto_invoicing,
-    counter_reminder,
-    email,
-    notification_service,
-    payment_reminder,
-    telegramm,
+    emailService,
+    telegrammService,
+    notificationService,
+
+    isContractExpired,
+    contractExpiredDays,
+
+    isAutoInvoicing,
+    autoInvoicingDays,
+
+    isCounterReminder,
+    counterReminderDays,
+
+    isPaymentReminder,
+    paymentReminderDays,
+
+    isRequestPaymentRemind,
+    requestPaymentRemindDays,
   } = req;
   const user = await getUserByUserId(userId);
   if (user) {
@@ -44,13 +56,7 @@ export const setSettings = async (props: ISetSettings) => {
       return { success: false, message: "No settings for user found" };
     }
 
-    respData.auto_invoicing = auto_invoicing || false;
-    respData.counter_reminder = counter_reminder || false;
-    respData.email = email || false;
-    respData.notification_service = notification_service || false;
-    respData.payment_reminder = payment_reminder || false;
-    respData.telegramm = telegramm || false;
-    await settingsRepository.save(respData);
+    await settingsRepository.update(respData.id, req);
 
     return { success: true };
   } else {

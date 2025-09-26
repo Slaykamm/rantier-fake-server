@@ -1,4 +1,3 @@
-import { Settings } from "../entity/settings.entity";
 import { IResponseDto } from "../models/response.model";
 import { Request, Response } from "express";
 import * as userDevices from "../services/userDevices.service";

@@ -65,8 +65,8 @@ export const startCronJobs = () => {
 
   // Проверка  за 3 дня на то что присылать счетчики для выставления счетов
   cron.schedule(
-    // process.env.SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
-    process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
+    process.env.SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
+    // process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
     async () => {
       SchedulerLogger.jobStart("[SCHEDULER] start", {
         jobName: ESchedulerType.invoicingTrigger,
@@ -74,7 +74,7 @@ export const startCronJobs = () => {
       });
       try {
         // TODO Добавить слайдер для выбора кол-ва дней за сколько запрашивать счетчики
-        const getNeedToInvoicedContracts = await invoicingContacts(2);
+        const getNeedToInvoicedContracts = await invoicingContacts();
         if (getNeedToInvoicedContracts?.length) {
           getNeedToInvoicedContracts.forEach(async (contract) => {
             // Проверяем что нотификейш сервис активен
