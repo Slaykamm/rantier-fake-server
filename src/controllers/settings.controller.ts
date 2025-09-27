@@ -9,7 +9,9 @@ export const getSettings = async (
   res: Response<IResponseDto<Settings>>
 ) => {
   try {
-    const result = await settingsService.getSettings(req?.user?.email || "");
+    const result = await settingsService.getSettingsByUserId(
+      req?.user?.email || ""
+    );
     if (!!result.success) {
       res.status(200).json({ status: "success", data: result.data });
     } else {

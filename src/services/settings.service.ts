@@ -6,9 +6,12 @@ import { getUserById, getUserByUserId } from "./user.service";
 
 const settingsRepository = AppDataSource.getRepository(Settings);
 
+export const getAllSettings = async () => {
+  const allSettings = await settingsRepository.find();
+  return allSettings;
+};
 //
-
-export const getSettings = async (userId: string) => {
+export const getSettingsByUserId = async (userId: string) => {
   const user = await getUserByUserId(userId);
   if (user) {
     const respData = await settingsRepository.find({
@@ -26,26 +29,6 @@ interface ISetSettings {
 
 export const setSettings = async (props: ISetSettings) => {
   const { req, userId } = props;
-  const {
-    emailService,
-    telegrammService,
-    notificationService,
-
-    isContractExpired,
-    contractExpiredDays,
-
-    isAutoInvoicing,
-    autoInvoicingDays,
-
-    isCounterReminder,
-    counterReminderDays,
-
-    isPaymentReminder,
-    paymentReminderDays,
-
-    isRequestPaymentRemind,
-    requestPaymentRemindDays,
-  } = req;
   const user = await getUserByUserId(userId);
   if (user) {
     const respData = await settingsRepository.findOneBy({
@@ -75,4 +58,15 @@ export const getSettingValueByName = async ({
     where: { userId: user_Id },
   });
   return { success: true, data: respData?.[settingName] };
+};
+
+export const getUserSettingValues = async ({
+  user_Id,
+}: {
+  user_Id: number;
+}) => {
+  const respData = await settingsRepository.findOne({
+    where: { userId: user_Id },
+  });
+  return { success: true, data: respData };
 };

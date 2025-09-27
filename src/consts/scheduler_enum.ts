@@ -1,4 +1,7 @@
 export enum ESchedulerType {
-  expiredContracts = "expiredContracts",
-  invoicingTrigger = "invoicingTrigger",
+  requestcountersTrigger = "requestcountersTrigger",
+  requestPaymentTrigger = "requestPaymentTrigger",
+  expireContractTrigger = "expireContractTrigger",
+  autoinvoicingTrigger = "autoinvoicingTrigger",
+  createInvoiceTrigger = "createInvoiceTrigger",
 }

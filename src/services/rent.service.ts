@@ -243,7 +243,59 @@ export const expiredContracts = async (days: number = 5) => {
   }
 };
 
-export const invoicingContacts = async (days: number = 3) => {
+export const expiredContractsByUserId = async (params: {
+  userId: number;
+  days: number;
+}) => {
+  const { days, userId } = params;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayString = today.toISOString().split("T")[0];
+
+  const targetDate = new Date();
+  targetDate.setDate(today.getDate() + days);
+  const targetDateString = targetDate.toISOString().split("T")[0];
+
+  try {
+    // Сначала получаем базовые данные с фильтрацией по userId
+    const expiredContracts = await rentRepository
+      .createQueryBuilder("rent")
+      .leftJoinAndSelect("rent.property", "property")
+      .where("date(rent.endContractDate) BETWEEN :startDate AND :endDate", {
+        startDate: todayString,
+        endDate: targetDateString,
+      })
+      .andWhere("rent.isActiveRent = :isActive", { isActive: true })
+      .andWhere("property.userId = :userId", { userId }) // Фильтрация по пользователю
+      .orderBy("rent.endContractDate", "ASC")
+      .getMany();
+
+    // Затем для каждого контракта получаем user и devices отдельно
+    const enrichedContracts = await Promise.all(
+      expiredContracts.map(async (rent) => {
+        if (rent.property?.userId) {
+          const userRepository = AppDataSource.getRepository(User);
+          const user = await userRepository.findOne({
+            where: { id: rent.property.userId },
+            relations: ["devices"],
+          });
+
+          if (user) {
+            rent.property.user = user;
+          }
+        }
+        return rent;
+      })
+    );
+
+    return enrichedContracts;
+  } catch (error) {
+    console.error("Error in expiredContractsByUserId:", error);
+    throw error;
+  }
+};
+
+export const counterRemindContracts = async (days: number = 3) => {
   const today = new Date();
   const targetDate = new Date();
   targetDate.setDate(today.getDate() + days);
@@ -267,6 +319,45 @@ export const invoicingContacts = async (days: number = 3) => {
     return expiredContracts;
   } catch (error) {
     console.error("Error in expiredContracts:", error);
+    throw error;
+  }
+};
+
+export const counterRemindContractsByUserId = async ({
+  days,
+  userId,
+}: {
+  days: number;
+  userId: number;
+}) => {
+  const today = new Date();
+  const targetDate = new Date();
+
+  today.setHours(0, 0, 0, 0);
+  targetDate.setHours(0, 0, 0, 0);
+
+  targetDate.setDate(today.getDate() + days);
+
+  // Форматируем день с ведущим нулем
+  const targetDay = targetDate.getDate().toString().padStart(2, "0");
+
+  try {
+    const queryBuilder = rentRepository
+      .createQueryBuilder("rent")
+      .leftJoinAndSelect("rent.property", "property")
+      .leftJoinAndSelect("property.user", "user")
+      .leftJoinAndSelect("user.devices", "devices")
+      .where("rent.requestIndicatorsDate LIKE :pattern", {
+        pattern: `%-${targetDay}`,
+      })
+      .andWhere("rent.isActiveRent = :isActive", { isActive: true })
+      .andWhere("property.userId = :userId", { userId })
+      .orderBy("rent.endContractDate", "ASC");
+
+    const expiredContracts = await queryBuilder.getMany();
+    return expiredContracts;
+  } catch (error) {
+    console.error("Error in invoicingContacts:", error);
     throw error;
   }
 };
@@ -295,5 +386,43 @@ export const getActiveRents = async () => {
     return contractsToClose;
   } catch (e) {
     console.log(`Ошибка поиска ${e}`);
+  }
+};
+
+export const getRequestPaymentContractsByUserId = async ({
+  days,
+  userId,
+}: {
+  days: number;
+  userId: number;
+}) => {
+  const today = new Date();
+  const targetDate = new Date();
+  targetDate.setDate(today.getDate() + days);
+
+  today.setHours(0, 0, 0, 0);
+  targetDate.setHours(0, 0, 0, 0);
+
+  // Форматируем день с ведущим нулем
+  const targetDay = targetDate.getDate().toString().padStart(2, "0");
+
+  try {
+    const queryBuilder = rentRepository
+      .createQueryBuilder("rent")
+      .leftJoinAndSelect("rent.property", "property")
+      .leftJoinAndSelect("property.user", "user")
+      .leftJoinAndSelect("user.devices", "devices")
+      .where("rent.paymentDate  LIKE :pattern", {
+        pattern: `%-${targetDay}`,
+      })
+      .andWhere("rent.isActiveRent = :isActive", { isActive: true })
+      .andWhere("property.userId = :userId", { userId })
+      .orderBy("rent.endContractDate", "ASC");
+
+    const upcomingPaymentContracts = await queryBuilder.getMany();
+    return upcomingPaymentContracts;
+  } catch (error) {
+    console.error("Error in upcomingPaymentContracts:", error);
+    throw error;
   }
 };
