@@ -53,9 +53,9 @@ export const createUserByUserId = async (userId: string) => {
         isPaymentReminder: false,
         paymentReminderDays: 1,
         isRequestPaymentRemind: false,
-        requestPaymentRemindDays: 2,
+        requestPaymentRemindDays: 1,
         isAutoInvoicing: false,
-        autoInvoicingDays: 1,
+        autoInvoicingDays: 2,
       });
 
       await settingRepository.save(newUserSettings);

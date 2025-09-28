@@ -25,11 +25,11 @@ export const startCronJobs = () => {
   // +Шедулер для отправки нотификейшенов для истекающиих контрактов. Проверяет что осталось <= 5 дней до истечения контракта.
   cron.schedule(
     // process.env.SCHEDULE_PAYMENT_REMIDER || "0 12 * * *",
-    process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "0 12 * * *",
+    process.env.SCHEDULE_EXPIRED_CONTRACTS || "0 12 * * *",
     async () => {
       SchedulerLogger.jobStart("[SCHEDULER] start", {
         jobName: ESchedulerType.expireContractTrigger,
-        cron: process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "0 12 * * *",
+        cron: process.env.SCHEDULE_EXPIRED_CONTRACTS || "0 12 * * *",
       });
       try {
         const allSettings = await getAllSettings();
@@ -73,12 +73,11 @@ export const startCronJobs = () => {
 
   // Шедулер на то что надо запросить прислать счетчики для выставления счетов
   cron.schedule(
-    process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
-    // process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
+    process.env.SCHEDULE_COUNTERS_REMINDER || "* 11 * * *",
     async () => {
       SchedulerLogger.jobStart("[SCHEDULER] start", {
         jobName: ESchedulerType.requestcountersTrigger,
-        cron: process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
+        cron: process.env.SCHEDULE_COUNTERS_REMINDER || "* 11 * * *",
       });
       try {
         const allSettings = await getAllSettings();
@@ -131,11 +130,11 @@ export const startCronJobs = () => {
 
   // Шедулер на Напоминание выставить счета за аренду
   cron.schedule(
-    process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
+    process.env.SCHEDULE_REQUEST_PAYMENT_REMINDER || "* 11 * * *",
     async () => {
       SchedulerLogger.jobStart("[SCHEDULER] start", {
         jobName: ESchedulerType.createInvoiceTrigger,
-        cron: process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
+        cron: process.env.SCHEDULE_REQUEST_PAYMENT_REMINDER || "* 11 * * *",
       });
       try {
         const allSettings = await getAllSettings();
@@ -183,11 +182,11 @@ export const startCronJobs = () => {
 
   // Шедулер 1. Создает счет на оплату за актуальный период, если не был создан еще счет. 2. Берет общий баланс и высылает арендатору.
   cron.schedule(
-    process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
+    process.env.SCHEDULE_AUTO_INVOICING || "* 11 * * *",
     async () => {
       SchedulerLogger.jobStart("[SCHEDULER] start", {
         jobName: ESchedulerType.autoinvoicingTrigger,
-        cron: process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "* 11 * * *",
+        cron: process.env.SCHEDULE_AUTO_INVOICING || "* 11 * * *",
       });
       try {
         const allSettings = await getAllSettings();
@@ -237,12 +236,11 @@ export const startCronJobs = () => {
   // SERVICE ШЕДУЛЕРЫ
   //  шедулер для отправки пушей из БД нотификейшнс
   cron.schedule(
-    process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "1 * * * *",
-    // process.env.SCHEDULE_NOTIFICATION_SERVICE || "1 * * * *",
+    process.env.SCHEDULE_NOTIFICATION_SERVICE || "1 * * * *",
     async () => {
       SchedulerLogger.jobStart("[SCHEDULER] start", {
         jobName: "push_notifications_sender",
-        cron: process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "1 * * * *",
+        cron: process.env.SCHEDULE_NOTIFICATION_SERVICE || "1 * * * *",
       });
       try {
         const actualNotifications = await getActualNotifications();
@@ -302,12 +300,11 @@ export const startCronJobs = () => {
   // Шедулер для закрытие контрактов аренды с закончившейся датой.
   // TODO ДОБАВИТЬ ДЖОБ ЧТОБЫ ВЫСЫЛАЛ Notification
   cron.schedule(
-    process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "16 0 * * *",
-    // process.env.SCHEDULE_DEACTIVATE_CONTRACT || "16 0 * * *",
+    process.env.SCHEDULE_DEACTIVATE_CONTRACT || "16 0 * * *",
     async () => {
       SchedulerLogger.jobStart("[SCHEDULER] start", {
         jobName: "deactivate_expired_contracts",
-        cron: process.env.TEST_SCHEDULE_COUNTERS_REMIDNER || "16 0 * * *",
+        cron: process.env.SCHEDULE_DEACTIVATE_CONTRACT || "16 0 * * *",
       });
       // Проверка на истекашие контракты
       try {
