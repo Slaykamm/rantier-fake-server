@@ -75,7 +75,15 @@ export const createUserByUserId = async (userId: string) => {
 };
 
 export const updateUserDataAction = async (props: IUpdateUserDto) => {
-  const { tgId, userId, firstName, lastName, tgUsername, avatarPath } = props;
+  const {
+    tgId,
+    userId,
+    firstName,
+    lastName,
+    tgUsername,
+    avatarPath,
+    initialLogin,
+  } = props;
   try {
     if (!userId) {
       return {
@@ -95,6 +103,7 @@ export const updateUserDataAction = async (props: IUpdateUserDto) => {
           lastName,
           tgNickname: getTgUsername(tgUsername),
           avatar: avatarPath,
+          initialLogin,
         };
 
         const dataToSave = { ...oldUserData, ...updateData };

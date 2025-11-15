@@ -25,7 +25,7 @@ export class User {
   avatar?: string;
 
   @Column("text", { nullable: true })
-  tgId!: string;
+  tgId?: string;
 
   @Column("text", { nullable: true })
   tgNickname?: string;
